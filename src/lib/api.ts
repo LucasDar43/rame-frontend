@@ -18,6 +18,11 @@ async function fetchApi<T>(endpoint: string, options?: RequestInit): Promise<T> 
     throw new Error(error.mensaje || `Error ${res.status}`);
   }
 
+  // 👇 CLAVE
+  if (res.status === 204) {
+    return undefined as T;
+  }
+
   return res.json();
 }
 
