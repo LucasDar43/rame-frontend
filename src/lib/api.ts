@@ -1,4 +1,11 @@
-import { Producto, Page, Variante, OrdenRequest, OrdenResponse } from '@/types';
+import {
+  Producto,
+  Page,
+  Variante,
+  VarianteRequestDTO,
+  OrdenRequest,
+  OrdenResponse,
+} from '@/types';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8080/api';
 console.log('BASE_URL:', BASE_URL);
@@ -13,12 +20,21 @@ async function fetchApi<T>(endpoint: string, options?: RequestInit): Promise<T> 
     },
   });
 
+  if (res.status === 401 || res.status === 403) {
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('token');
+      localStorage.removeItem('email');
+      localStorage.removeItem('rol');
+      window.location.href = '/admin/login';
+    }
+    throw new Error('Sesión expirada');
+  }
+
   if (!res.ok) {
     const error = await res.json().catch(() => ({}));
     throw new Error(error.mensaje || `Error ${res.status}`);
   }
 
-  // 👇 CLAVE
   if (res.status === 204) {
     return undefined as T;
   }
@@ -34,7 +50,7 @@ function authHeaders(): HeadersInit {
   return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
-// ─── PRODUCTOS ───────────────────────────────────────────
+// PRODUCTOS
 
 export async function getProductos(page = 0, size = 12): Promise<Page<Producto>> {
   return fetchApi(`/productos?page=${page}&size=${size}`);
@@ -52,13 +68,13 @@ export async function getProductosPorCategoria(categoria: string): Promise<Produ
   return fetchApi(`/productos/categoria/${encodeURIComponent(categoria)}`);
 }
 
-// ─── PRODUCTOS - ADMIN ────────────────────────────────────
+// PRODUCTOS - ADMIN
 
 export async function crearProducto(formData: FormData): Promise<Producto> {
   const res = await fetch(`${BASE_URL}/productos`, {
     method: 'POST',
     headers: authHeaders(),
-    body: formData, // multipart, NO pongas Content-Type acá
+    body: formData,
   });
   if (!res.ok) {
     const error = await res.json().catch(() => ({}));
@@ -82,13 +98,48 @@ export async function eliminarProducto(id: number): Promise<void> {
   });
 }
 
-// ─── VARIANTES ───────────────────────────────────────────
+// VARIANTES
 
 export async function getVariantes(productoId: number): Promise<Variante[]> {
-  return fetchApi(`/productos/${productoId}/variantes`);
+  return fetchApi(`/productos/${productoId}/variantes`, {
+    headers: authHeaders(),
+  });
 }
 
-// ─── ÓRDENES ─────────────────────────────────────────────
+export async function crearVariante(
+  productoId: number,
+  data: VarianteRequestDTO,
+): Promise<Variante> {
+  return fetchApi(`/productos/${productoId}/variantes`, {
+    method: 'POST',
+    headers: authHeaders(),
+    body: JSON.stringify(data),
+  });
+}
+
+export async function actualizarVariante(
+  productoId: number,
+  varianteId: number,
+  data: VarianteRequestDTO,
+): Promise<Variante> {
+  return fetchApi(`/productos/${productoId}/variantes/${varianteId}`, {
+    method: 'PUT',
+    headers: authHeaders(),
+    body: JSON.stringify(data),
+  });
+}
+
+export async function eliminarVariante(
+  productoId: number,
+  varianteId: number,
+): Promise<void> {
+  return fetchApi(`/productos/${productoId}/variantes/${varianteId}`, {
+    method: 'DELETE',
+    headers: authHeaders(),
+  });
+}
+
+// ORDENES
 
 export async function crearOrden(data: OrdenRequest): Promise<OrdenResponse> {
   return fetchApi('/ordenes', {
@@ -101,7 +152,7 @@ export async function getOrden(id: number): Promise<OrdenResponse> {
   return fetchApi(`/ordenes/${id}`);
 }
 
-// ─── AUTH ─────────────────────────────────────────────────
+// AUTH
 
 export async function login(email: string, password: string) {
   return fetchApi<{ token: string; email: string; rol: string }>('/auth/login', {

@@ -28,6 +28,13 @@ export interface Variante {
   activo: boolean;
 }
 
+export interface VarianteRequestDTO {
+  talle: string;
+  color: string;
+  stock: number;
+  sku?: string;
+}
+
 export interface Page<T> {
   content: T[];
   totalElements: number;
