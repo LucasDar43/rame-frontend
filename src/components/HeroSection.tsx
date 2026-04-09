@@ -117,7 +117,7 @@ export default function HeroSection() {
             maxWidth: '420px', marginBottom: '36px', fontWeight: 300,
             animation: 'fadeUp 0.6s ease 0.5s both',
           }}>
-            Somos Dylan, Luci y su hija. Un negocio familiar que nacio del amor al deporte y crecio con cada cliente. Ropa deportiva para que des lo mejor de vos.
+            Somos Dylan, Luci y Gianna. Un negocio familiar que nacio del amor al deporte y crecio con cada cliente. Ropa deportiva para que des lo mejor de vos.
           </p>
 
           {/* CTAs */}

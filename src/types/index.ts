@@ -78,3 +78,14 @@ export interface OrdenItemDTO {
   precioUnitario: number;
   subtotal: number;
 }
+
+export interface FilaError {
+  fila: number;
+  mensaje: string;
+}
+
+export interface ImportacionResultado {
+  productosCreados: number;
+  variantesCreadas: number;
+  errores: FilaError[];
+}

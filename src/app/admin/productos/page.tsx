@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { eliminarProducto, getProductos } from '@/lib/api';
 import { Producto } from '@/types';
+import ImportarExcelModal from '@/components/admin/ImportarExcelModal';
 import ProductosTable from './components/ProductosTable';
 import PaginacionControls from './components/PaginacionControls';
 import Link from 'next/link';
@@ -15,9 +16,11 @@ export default function AdminProductosPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [page, setPage] = useState(0);
+  const [reloadKey, setReloadKey] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [deletingId, setDeletingId] = useState<number | null>(null);
   const [toastVisible, setToastVisible] = useState(false);
+  const [modalImportar, setModalImportar] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -43,20 +46,20 @@ export default function AdminProductosPage() {
 
     loadProductos();
     return () => { active = false; };
-  }, [page]);
+  }, [page, reloadKey]);
 
-    useEffect(() => {
-      if (searchParams.get('creado') === '1') {
-        setToastVisible(true);
-        setTimeout(() => {
-          setToastVisible(false);
-          router.replace('/admin/productos');
-        }, 3000);
-      }
-    }, []);
+  useEffect(() => {
+    if (searchParams.get('creado') === '1') {
+      setToastVisible(true);
+      setTimeout(() => {
+        setToastVisible(false);
+        router.replace('/admin/productos');
+      }, 3000);
+    }
+  }, []);
 
   const handleEliminar = async (id: number) => {
-    const confirmado = window.confirm('¿Eliminar este producto? Esta acción no se puede deshacer.');
+    const confirmado = window.confirm('\u00bfEliminar este producto? Esta acci\u00f3n no se puede deshacer.');
     if (!confirmado) return;
 
     setDeletingId(id);
@@ -101,20 +104,41 @@ export default function AdminProductosPage() {
             </h1>
           </div>
 
-          <Link href="/admin/productos/nuevo" style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            padding: '10px 20px',
-            background: '#111111',
-            color: '#ffffff',
-            textDecoration: 'none',
-            fontSize: '12px',
-            fontWeight: 600,
-            letterSpacing: '1.5px',
-            textTransform: 'uppercase',
-          }}>
-            Nuevo producto
-          </Link>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <button
+              type="button"
+              onClick={() => setModalImportar(true)}
+              style={{
+                border: '1px solid var(--border2)',
+                background: 'transparent',
+                color: 'var(--black)',
+                padding: '10px 20px',
+                fontSize: '12px',
+                fontWeight: 600,
+                letterSpacing: '1.5px',
+                textTransform: 'uppercase',
+                cursor: 'pointer',
+                marginRight: '10px',
+              }}
+            >
+              Importar Excel
+            </button>
+
+            <Link href="/admin/productos/nuevo" style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              padding: '10px 20px',
+              background: '#111111',
+              color: '#ffffff',
+              textDecoration: 'none',
+              fontSize: '12px',
+              fontWeight: 600,
+              letterSpacing: '1.5px',
+              textTransform: 'uppercase',
+            }}>
+              Nuevo producto
+            </Link>
+          </div>
         </div>
 
         <section style={{
@@ -151,22 +175,32 @@ export default function AdminProductosPage() {
           )}
         </section>
         {toastVisible && (
-                        <div style={{
-                          position: 'fixed',
-                          bottom: '32px',
-                          right: '32px',
-                          background: '#111111',
-                          color: '#ffffff',
-                          padding: '14px 24px',
-                          fontSize: '13px',
-                          fontWeight: 500,
-                          letterSpacing: '0.5px',
-                          zIndex: 999,
-                          boxShadow: '0 4px 24px rgba(0,0,0,0.18)',
-                        }}>
-                          Producto creado correctamente
-                        </div>
-                      )}
+          <div style={{
+            position: 'fixed',
+            bottom: '32px',
+            right: '32px',
+            background: '#111111',
+            color: '#ffffff',
+            padding: '14px 24px',
+            fontSize: '13px',
+            fontWeight: 500,
+            letterSpacing: '0.5px',
+            zIndex: 999,
+            boxShadow: '0 4px 24px rgba(0,0,0,0.18)',
+          }}>
+            Producto creado correctamente
+          </div>
+        )}
+        {modalImportar && (
+          <ImportarExcelModal
+            onClose={() => setModalImportar(false)}
+            onSuccess={() => {
+              setModalImportar(false);
+              setPage(0);
+              setReloadKey((prev) => prev + 1);
+            }}
+          />
+        )}
       </div>
     </main>
   );

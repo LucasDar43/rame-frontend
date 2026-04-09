@@ -5,6 +5,7 @@ import {
   VarianteRequestDTO,
   OrdenRequest,
   OrdenResponse,
+  ImportacionResultado,
 } from '@/types';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8080/api';
@@ -27,7 +28,7 @@ async function fetchApi<T>(endpoint: string, options?: RequestInit): Promise<T> 
       localStorage.removeItem('rol');
       window.location.href = '/admin/login';
     }
-    throw new Error('Sesión expirada');
+    throw new Error('Sesi\u00f3n expirada');
   }
 
   if (!res.ok) {
@@ -159,4 +160,34 @@ export async function login(email: string, password: string) {
     method: 'POST',
     body: JSON.stringify({ email, password }),
   });
+}
+
+export async function importarProductosSimple(
+  file: File
+): Promise<ImportacionResultado> {
+  const formData = new FormData();
+  formData.append('archivo', file);
+
+  const res = await fetch(`${BASE_URL}/productos/importar-simple`, {
+    method: 'POST',
+    headers: authHeaders(),
+    body: formData,
+  });
+
+  if (res.status === 401 || res.status === 403) {
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('token');
+      localStorage.removeItem('email');
+      localStorage.removeItem('rol');
+      window.location.href = '/admin/login';
+    }
+    throw new Error('Sesi\u00f3n expirada');
+  }
+
+  if (!res.ok) {
+    const error = await res.json().catch(() => ({}));
+    throw new Error(error.mensaje || `Error ${res.status}`);
+  }
+
+  return res.json();
 }
