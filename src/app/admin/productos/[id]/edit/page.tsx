@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { getProducto, getVariantes } from '@/lib/api';
 import { Producto, Variante } from '@/types';
+import ProductoEditForm from './components/ProductoEditForm';
 import VariantesManager from './components/VariantesManager';
 
 export default function EditProductoPage() {
@@ -21,7 +22,7 @@ export default function EditProductoPage() {
 
     async function loadData() {
       if (!Number.isFinite(productoId) || productoId <= 0) {
-        setError('ID de producto inválido.');
+        setError('ID de producto invalido.');
         setLoading(false);
         return;
       }
@@ -108,14 +109,14 @@ export default function EditProductoPage() {
           </button>
         </div>
 
-        <section
-          style={{
-            border: '1px solid var(--border)',
-            background: '#ffffff',
-            overflow: 'hidden',
-          }}
-        >
-          {loading ? (
+        {loading ? (
+          <section
+            style={{
+              border: '1px solid var(--border)',
+              background: '#ffffff',
+              overflow: 'hidden',
+            }}
+          >
             <div
               style={{
                 padding: '48px 24px',
@@ -126,7 +127,15 @@ export default function EditProductoPage() {
             >
               Cargando...
             </div>
-          ) : error ? (
+          </section>
+        ) : error ? (
+          <section
+            style={{
+              border: '1px solid var(--border)',
+              background: '#ffffff',
+              overflow: 'hidden',
+            }}
+          >
             <div
               style={{
                 padding: '48px 24px',
@@ -137,13 +146,42 @@ export default function EditProductoPage() {
             >
               {error}
             </div>
-          ) : producto ? (
-            <VariantesManager
-              productoId={productoId}
-              producto={producto}
-              variantesIniciales={variantes}
-            />
-          ) : (
+          </section>
+        ) : producto ? (
+          <>
+            <section
+              style={{
+                border: '1px solid var(--border)',
+                background: '#ffffff',
+                overflow: 'hidden',
+                marginBottom: '24px',
+              }}
+            >
+              <ProductoEditForm producto={producto} />
+            </section>
+
+            <section
+              style={{
+                border: '1px solid var(--border)',
+                background: '#ffffff',
+                overflow: 'hidden',
+              }}
+            >
+              <VariantesManager
+                productoId={productoId}
+                producto={producto}
+                variantesIniciales={variantes}
+              />
+            </section>
+          </>
+        ) : (
+          <section
+            style={{
+              border: '1px solid var(--border)',
+              background: '#ffffff',
+              overflow: 'hidden',
+            }}
+          >
             <div
               style={{
                 padding: '48px 24px',
@@ -152,10 +190,10 @@ export default function EditProductoPage() {
                 fontSize: '15px',
               }}
             >
-              No se encontró el producto.
+              No se encontro el producto.
             </div>
-          )}
-        </section>
+          </section>
+        )}
       </div>
     </main>
   );
