@@ -2,9 +2,11 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import useCart from '@/hooks/useCart';
 
 export default function Navbar() {
   const [search, setSearch] = useState('');
+  const { totalItems } = useCart();
 
   return (
     <nav style={{
@@ -69,13 +71,15 @@ export default function Navbar() {
             <line x1="3" y1="6" x2="21" y2="6"/>
             <path d="M16 10a4 4 0 0 1-8 0"/>
           </svg>
-          <span style={{
-            position: 'absolute', top: '-6px', right: '-6px',
-            width: '16px', height: '16px', background: '#111111',
-            color: '#ffffff', fontSize: '9px', fontWeight: 700,
-            borderRadius: '50%', display: 'flex',
-            alignItems: 'center', justifyContent: 'center',
-          }}>0</span>
+          {totalItems > 0 && (
+            <span style={{
+              position: 'absolute', top: '-6px', right: '-6px',
+              width: '16px', height: '16px', background: '#111111',
+              color: '#ffffff', fontSize: '9px', fontWeight: 700,
+              borderRadius: '50%', display: 'flex',
+              alignItems: 'center', justifyContent: 'center',
+            }}>{totalItems}</span>
+          )}
         </button>
       </div>
     </nav>

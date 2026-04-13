@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Producto, Variante } from '@/types';
+import useCart from '@/hooks/useCart';
 
 interface Props {
   producto: Producto;
@@ -15,19 +16,30 @@ export default function ProductoDetalle({ producto, variantes }: Props) {
   const [codigoPostal, setCodigoPostal] = useState('');
   const [envioCosto, setEnvioCosto] = useState<string | null>(null);
   const [envioCargando, setEnvioCargando] = useState(false);
+  const [agregado, setAgregado] = useState(false);
+  const agregadoTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const { addItem } = useCart();
 
-  const talles = [...new Set(variantes.map((v) => v.talle))];
-  const colores = [...new Set(variantes.map((v) => v.color))];
+  const talles = Array.from(new Set(variantes.map((v) => v.talle)));
+  const colores = Array.from(new Set(variantes.map((v) => v.color)));
 
   const varianteSeleccionada = variantes.find(
     (v) => v.talle === talleSeleccionado && v.color === colorSeleccionado
   );
 
-  const imagenes = producto.imagenes.length > 0
+  const imagenes = producto.imagenes?.length
     ? producto.imagenes.map((i) => i.url)
     : producto.imagenUrl
     ? [producto.imagenUrl]
     : [];
+
+  useEffect(() => {
+    return () => {
+      if (agregadoTimeoutRef.current !== null) {
+        clearTimeout(agregadoTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const calcularEnvio = async () => {
     if (codigoPostal.length < 4) return;
@@ -37,6 +49,34 @@ export default function ProductoDetalle({ producto, variantes }: Props) {
     await new Promise((r) => setTimeout(r, 1000));
     setEnvioCosto('$2.850 — Llega en 3 a 5 días hábiles');
     setEnvioCargando(false);
+  };
+
+  const handleAgregarAlCarrito = () => {
+    if (!varianteSeleccionada || varianteSeleccionada.stock <= 0) {
+      return;
+    }
+
+    addItem({
+      productoId: producto.id,
+      varianteId: varianteSeleccionada.id,
+      nombre: producto.nombre,
+      marca: producto.marca,
+      imagenUrl: producto.imagenUrl ?? producto.imagenes?.[0]?.url,
+      talle: varianteSeleccionada.talle,
+      color: varianteSeleccionada.color,
+      precio: producto.precio,
+      cantidad: 1,
+    });
+
+    setAgregado(true);
+
+    if (agregadoTimeoutRef.current !== null) {
+      clearTimeout(agregadoTimeoutRef.current);
+    }
+
+    agregadoTimeoutRef.current = setTimeout(() => {
+      setAgregado(false);
+    }, 1500);
   };
 
   return (
@@ -57,7 +97,7 @@ export default function ProductoDetalle({ producto, variantes }: Props) {
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '80px' }}>
 
-        {/* ── Columna izquierda — Galería ── */}
+        {/* Columna izquierda — Galería */}
         <div>
           {/* Imagen principal */}
           <div style={{
@@ -72,7 +112,7 @@ export default function ProductoDetalle({ producto, variantes }: Props) {
                   alt={producto.nombre}
                   style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                 />
-                {/* Flechas de navegación */}
+                {/* Flechas de navegaciÃ³n */}
                 {imagenes.length > 1 && (
                   <>
                     <button
@@ -167,7 +207,7 @@ export default function ProductoDetalle({ producto, variantes }: Props) {
           )}
         </div>
 
-        {/* ── Columna derecha — Info ── */}
+        {/* Columna derecha — Info */}
         <div style={{ paddingTop: '8px' }}>
 
           {/* Marca + nombre */}
@@ -193,7 +233,7 @@ export default function ProductoDetalle({ producto, variantes }: Props) {
             ${producto.precio.toLocaleString('es-AR')}
           </div>
 
-          {/* Descripción */}
+          {/* DescripciÃ³n */}
           {producto.descripcion && (
             <p style={{
               fontSize: '14px', color: 'var(--light)', lineHeight: 1.8,
@@ -293,8 +333,9 @@ export default function ProductoDetalle({ producto, variantes }: Props) {
             </div>
           )}
 
-          {/* Botón agregar */}
+          {/* BotÃ³n agregar */}
           <button
+            onClick={handleAgregarAlCarrito}
             disabled={!varianteSeleccionada || varianteSeleccionada.stock === 0}
             style={{
               width: '100%', padding: '18px', fontSize: '11px',
@@ -309,11 +350,13 @@ export default function ProductoDetalle({ producto, variantes }: Props) {
             {!talleSeleccionado || !colorSeleccionado
               ? 'Seleccioná talle y color'
               : varianteSeleccionada && varianteSeleccionada.stock > 0
-              ? 'Agregar al carrito'
+              ? agregado
+                ? 'Agregado'
+                : 'Agregar al carrito'
               : 'Sin stock'}
           </button>
 
-          {/* ── Calcular envío ── */}
+          {/* â”€â”€ Calcular envÃ­o â”€â”€ */}
           <div style={{
             marginTop: '28px', padding: '20px',
             border: '1px solid var(--border)', background: '#fafafa',
@@ -322,12 +365,12 @@ export default function ProductoDetalle({ producto, variantes }: Props) {
               fontSize: '10px', fontWeight: 700, letterSpacing: '2px',
               textTransform: 'uppercase', color: 'var(--white)', marginBottom: '14px',
             }}>
-              Calcular envío
+              Calcular envÃ­o
             </div>
             <div style={{ display: 'flex', gap: '8px' }}>
               <input
                 type="text"
-                placeholder="Código postal"
+                placeholder="CÃ³digo postal"
                 value={codigoPostal}
                 onChange={(e) => {
                   setCodigoPostal(e.target.value.replace(/\D/g, '').slice(0, 8));
