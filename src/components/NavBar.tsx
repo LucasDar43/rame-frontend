@@ -59,28 +59,33 @@ export default function Navbar() {
           </svg>
         </div>
 
-        <button style={{
-          position: 'relative', background: 'transparent',
-          border: '1px solid var(--border)', color: 'var(--light)',
-          width: '38px', height: '38px', display: 'flex',
-          alignItems: 'center', justifyContent: 'center', cursor: 'pointer',
-        }}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" strokeWidth="1.8">
-            <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
-            <line x1="3" y1="6" x2="21" y2="6"/>
-            <path d="M16 10a4 4 0 0 1-8 0"/>
-          </svg>
-          {totalItems > 0 && (
-            <span style={{
-              position: 'absolute', top: '-6px', right: '-6px',
-              width: '16px', height: '16px', background: '#111111',
-              color: '#ffffff', fontSize: '9px', fontWeight: 700,
-              borderRadius: '50%', display: 'flex',
-              alignItems: 'center', justifyContent: 'center',
-            }}>{totalItems}</span>
-          )}
-        </button>
+        <Link href="/carrito" style={{ position: 'relative', display: 'flex', textDecoration: 'none' }}>
+          <div style={{
+            position: 'relative', background: 'transparent',
+            border: '1px solid var(--border)', color: 'var(--light)',
+            width: '38px', height: '38px', display: 'flex',
+            alignItems: 'center', justifyContent: 'center', cursor: 'pointer',
+          }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" strokeWidth="1.8">
+              <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+              <line x1="3" y1="6" x2="21" y2="6"/>
+              <path d="M16 10a4 4 0 0 1-8 0"/>
+            </svg>
+            {totalItems > 0 && (
+              <span style={{
+                position: 'absolute',
+                top: '-6px',
+                right: '-6px',
+                background: 'var(--accent)',
+                color: '#ffffff',
+                fontSize: '10px',
+                padding: '2px 6px',
+                borderRadius: '999px',
+              }}>{totalItems}</span>
+            )}
+          </div>
+        </Link>
       </div>
     </nav>
   );

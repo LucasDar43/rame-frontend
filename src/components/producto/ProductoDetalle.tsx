@@ -356,7 +356,7 @@ export default function ProductoDetalle({ producto, variantes }: Props) {
               : 'Sin stock'}
           </button>
 
-          {/* â”€â”€ Calcular envÃ­o â”€â”€ */}
+          {/* â”€â”€ Calcular envio â”€â”€ */}
           <div style={{
             marginTop: '28px', padding: '20px',
             border: '1px solid var(--border)', background: '#fafafa',
@@ -365,12 +365,12 @@ export default function ProductoDetalle({ producto, variantes }: Props) {
               fontSize: '10px', fontWeight: 700, letterSpacing: '2px',
               textTransform: 'uppercase', color: 'var(--white)', marginBottom: '14px',
             }}>
-              Calcular envÃ­o
+              Calcular envio
             </div>
             <div style={{ display: 'flex', gap: '8px' }}>
               <input
                 type="text"
-                placeholder="CÃ³digo postal"
+                placeholder="Codigo postal"
                 value={codigoPostal}
                 onChange={(e) => {
                   setCodigoPostal(e.target.value.replace(/\D/g, '').slice(0, 8));
