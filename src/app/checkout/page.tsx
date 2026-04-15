@@ -38,10 +38,13 @@ export default function CheckoutPage() {
     }
   }, [items.length, router]);
 
-  const total = items.reduce(
+  const subtotal = items.reduce(
     (accumulator, item) => accumulator + item.precio * item.cantidad,
     0
   );
+  const costoEnvio = subtotal < 50000 ? 3000 : 0;
+  const totalFinal = subtotal + costoEnvio;
+  const envioEsGratis = costoEnvio === 0;
 
   const handleChange = (field: keyof FormState, value: string) => {
     setForm((current) => ({ ...current, [field]: value }));
@@ -91,7 +94,10 @@ export default function CheckoutPage() {
     setError('');
     setLoading(true);
 
-    const payload: OrdenRequest = {
+    const payload: OrdenRequest & {
+      costoEnvio: number;
+      totalFinal: number;
+    } = {
       nombreComprador: nombre,
       emailComprador: email,
       telefonoComprador: telefono || undefined,
@@ -100,6 +106,8 @@ export default function CheckoutPage() {
         productoId: item.productoId,
         cantidad: item.cantidad,
       })),
+      costoEnvio,
+      totalFinal,
     };
 
     try {
@@ -344,7 +352,7 @@ export default function CheckoutPage() {
                 }}
               >
                 {items.map((item) => {
-                  const subtotal = item.precio * item.cantidad;
+                  const itemSubtotal = item.precio * item.cantidad;
 
                   return (
                     <div
@@ -410,7 +418,7 @@ export default function CheckoutPage() {
                       >
                         <span>Subtotal</span>
                         <span style={{ color: 'var(--black)' }}>
-                          {formatPrice(subtotal)}
+                          {formatPrice(itemSubtotal)}
                         </span>
                       </div>
                     </div>
@@ -423,35 +431,79 @@ export default function CheckoutPage() {
                   borderTop: '1px solid var(--border)',
                   marginTop: '8px',
                   paddingTop: '18px',
-                  display: 'flex',
-                  alignItems: 'flex-end',
-                  justifyContent: 'space-between',
-                  gap: '16px',
+                  display: 'grid',
+                  gap: '12px',
                 }}
               >
-                <span
+                <div
                   style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    gap: '16px',
                     fontSize: '13px',
-                    fontWeight: 600,
-                    textTransform: 'uppercase',
-                    color: 'var(--black)',
-                    letterSpacing: '1.5px',
+                    color: 'var(--gray)',
                   }}
                 >
-                  Total
-                </span>
+                  <span>Subtotal</span>
+                  <span style={{ color: 'var(--black)' }}>
+                    {formatPrice(subtotal)}
+                  </span>
+                </div>
 
-                <span
+                <div
                   style={{
-                    fontFamily: 'var(--font-playfair)',
-                    fontWeight: 700,
-                    fontSize: '28px',
-                    color: 'var(--black)',
-                    lineHeight: 1,
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    gap: '16px',
+                    fontSize: '13px',
+                    color: 'var(--gray)',
                   }}
                 >
-                  {formatPrice(total)}
-                </span>
+                  <span>Envío</span>
+                  <span
+                    style={{
+                      color: envioEsGratis ? '#15803d' : 'var(--black)',
+                      fontWeight: envioEsGratis ? 600 : 400,
+                    }}
+                  >
+                    {envioEsGratis ? 'Envío gratis' : formatPrice(costoEnvio)}
+                  </span>
+                </div>
+
+                <div
+                  style={{
+                    borderTop: '1px solid var(--border)',
+                    paddingTop: '12px',
+                    display: 'flex',
+                    alignItems: 'flex-end',
+                    justifyContent: 'space-between',
+                    gap: '16px',
+                  }}
+                >
+                  <span
+                    style={{
+                      fontSize: '13px',
+                      fontWeight: 600,
+                      textTransform: 'uppercase',
+                      color: 'var(--black)',
+                      letterSpacing: '1.5px',
+                    }}
+                  >
+                    Total
+                  </span>
+
+                  <span
+                    style={{
+                      fontFamily: 'var(--font-playfair)',
+                      fontWeight: 700,
+                      fontSize: '28px',
+                      color: 'var(--black)',
+                      lineHeight: 1,
+                    }}
+                  >
+                    {formatPrice(totalFinal)}
+                  </span>
+                </div>
               </div>
             </aside>
           </div>
