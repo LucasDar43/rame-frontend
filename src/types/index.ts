@@ -89,3 +89,12 @@ export interface ImportacionResultado {
   variantesCreadas: number;
   errores: FilaError[];
 }
+
+export interface OrdenResumen {
+  id: number;
+  nombreComprador: string;
+  emailComprador: string;
+  total: number;
+  estado: 'PENDIENTE' | 'APROBADO' | 'RECHAZADO' | 'CANCELADO';
+  fechaCreacion: string;
+}
