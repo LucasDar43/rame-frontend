@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 
 import ProductCard from '@/components/ProductCard';
-import { getProductos } from '@/lib/api';
+import { getProductos, getProductosPorCategoria } from '@/lib/api';
 import { Producto } from '@/types';
 
 const categorias = ['Todas', 'Mujer', 'Hombre', 'Liquidacion', 'Novedades'];
@@ -13,7 +13,7 @@ export default function ProductosPage() {
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [error, setError] = useState<string | null>(null);
   const [categoriaActiva, setCategoriaActiva] = useState('Todas');
 
   useEffect(() => {
@@ -21,15 +21,24 @@ export default function ProductosPage() {
 
     async function loadProductos() {
       setLoading(true);
-      setError('');
+      setError(null);
 
       try {
-        const res = await getProductos(page, 20);
+        if (categoriaActiva === 'Todas') {
+          const res = await getProductos(page, 20);
 
-        if (!active) return;
+          if (!active) return;
 
-        setProductos(res.content);
-        setTotalPages(res.totalPages);
+          setProductos(res.content);
+          setTotalPages(res.totalPages);
+        } else {
+          const res = await getProductosPorCategoria(categoriaActiva);
+
+          if (!active) return;
+
+          setProductos(res);
+          setTotalPages(1);
+        }
       } catch (err) {
         if (!active) return;
 
@@ -48,12 +57,12 @@ export default function ProductosPage() {
     return () => {
       active = false;
     };
-  }, [page]);
+  }, [page, categoriaActiva]);
 
-  const productosFiltrados =
-    categoriaActiva === 'Todas'
-      ? productos
-      : productos.filter((p) => p.categoria === categoriaActiva);
+  function handleCategoriaChange(categoria: string) {
+    setCategoriaActiva(categoria);
+    setPage(0);
+  }
 
   return (
     <main style={{ minHeight: '100vh', background: '#ffffff' }}>
@@ -84,7 +93,7 @@ export default function ProductosPage() {
             color: 'var(--gray)',
           }}
         >
-          {productosFiltrados.length} productos encontrados
+          {productos.length} productos encontrados
         </p>
       </section>
 
@@ -104,7 +113,7 @@ export default function ProductosPage() {
             <button
               key={cat}
               type="button"
-              onClick={() => setCategoriaActiva(cat)}
+              onClick={() => handleCategoriaChange(cat)}
               style={{
                 background: activa ? '#111111' : 'transparent',
                 color: activa ? '#ffffff' : 'var(--light)',
@@ -147,7 +156,7 @@ export default function ProductosPage() {
           >
             {error}
           </div>
-        ) : productosFiltrados.length === 0 ? (
+        ) : productos.length === 0 ? (
           <div
             style={{
               padding: '80px 0',
@@ -156,7 +165,7 @@ export default function ProductosPage() {
               fontSize: '15px',
             }}
           >
-            No hay productos en esta categor\u00eda.
+            No hay productos
           </div>
         ) : (
           <div
@@ -166,14 +175,14 @@ export default function ProductosPage() {
               gap: '2px',
             }}
           >
-            {productosFiltrados.map((producto) => (
+            {productos.map((producto) => (
               <ProductCard key={producto.id} producto={producto} />
             ))}
           </div>
         )}
       </section>
 
-      {totalPages > 1 && (
+      {categoriaActiva === 'Todas' && totalPages > 1 && (
         <section
           style={{
             padding: '32px 52px',

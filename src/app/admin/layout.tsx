@@ -146,8 +146,10 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     const authenticated = isAuthenticated();
 
     if (!authenticated && !isLoginRoute) {
+      setCheckingAuth(false);
       router.replace('/admin/login');
     } else if (authenticated && isLoginRoute) {
+      setCheckingAuth(false);
       router.replace('/admin/productos');
     } else {
       setCheckingAuth(false);
