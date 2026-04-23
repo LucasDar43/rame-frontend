@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 export default function HeroSection() {
   return (
     <section style={{
@@ -125,23 +127,27 @@ export default function HeroSection() {
             display: 'flex', gap: '12px', alignItems: 'center',
             animation: 'fadeUp 0.6s ease 0.65s both',
           }}>
-            <button style={{
+            <Link href="/productos" style={{
               background: '#111111', color: '#ffffff', border: 'none',
               padding: '14px 36px', fontFamily: 'var(--font-dm-sans)',
               fontWeight: 600, fontSize: '11px', letterSpacing: '2.5px',
               textTransform: 'uppercase', cursor: 'pointer',
+              display: 'inline-block',
+              textDecoration: 'none',
             }}>
               Ver Catalogo
-            </button>
-            <button style={{
+            </Link>
+            <Link href="/#nosotros" style={{
               background: 'transparent', color: 'var(--white)',
               border: '1px solid var(--border2)', padding: '14px 36px',
               fontFamily: 'var(--font-dm-sans)', fontWeight: 500,
               fontSize: '11px', letterSpacing: '2.5px',
               textTransform: 'uppercase', cursor: 'pointer',
+              display: 'inline-block',
+              textDecoration: 'none',
             }}>
               Nuestra Historia
-            </button>
+            </Link>
           </div>
         </div>
 

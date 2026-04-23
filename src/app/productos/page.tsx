@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 
 import ProductCard from '@/components/ProductCard';
 import { getProductos, getProductosPorCategoria } from '@/lib/api';
@@ -8,13 +9,21 @@ import { Producto } from '@/types';
 
 const categorias = ['Todas', 'Mujer', 'Hombre', 'Liquidacion', 'Novedades'];
 
-export default function ProductosPage() {
+function ProductosContent() {
+  const searchParams = useSearchParams();
+  const categoriaInicial = searchParams.get('categoria') ?? 'Todas';
   const [productos, setProductos] = useState<Producto[]>([]);
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [categoriaActiva, setCategoriaActiva] = useState('Todas');
+  const [categoriaActiva, setCategoriaActiva] = useState(categoriaInicial);
+
+useEffect(() => {
+  const categoria = searchParams.get('categoria') ?? 'Todas';
+  setCategoriaActiva(categoria);
+  setPage(0);
+}, [searchParams]);
 
   useEffect(() => {
     let active = true;
@@ -243,5 +252,25 @@ export default function ProductosPage() {
         </section>
       )}
     </main>
+  );
+}
+
+
+export default function ProductosPage() {
+  return (
+    <Suspense fallback={
+      <main style={{ minHeight: '100vh', background: '#ffffff' }}>
+        <div style={{
+          padding: '80px 0',
+          textAlign: 'center',
+          color: 'var(--gray)',
+          fontSize: '15px',
+        }}>
+          Cargando...
+        </div>
+      </main>
+    }>
+      <ProductosContent />
+    </Suspense>
   );
 }

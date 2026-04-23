@@ -7,6 +7,12 @@ import useCart from '@/hooks/useCart';
 export default function Navbar() {
   const [search, setSearch] = useState('');
   const { totalItems } = useCart();
+  const navItems = [
+    { label: 'Mujer', href: '/productos?categoria=Mujer' },
+    { label: 'Hombre', href: '/productos?categoria=Hombre' },
+    { label: 'Liquidacion', href: '/productos?categoria=Liquidacion' },
+    { label: 'Nosotros', href: '/#nosotros' },
+  ];
 
   return (
     <nav style={{
@@ -25,14 +31,14 @@ export default function Navbar() {
       </Link>
 
       <ul style={{ display: 'flex', gap: '36px', listStyle: 'none' }}>
-        {['Mujer', 'Hombre', 'Liquidacion', 'Nosotros'].map((item) => (
-          <li key={item}>
-            <Link href={`/${item.toLowerCase()}`} style={{
+        {navItems.map((item) => (
+          <li key={item.label}>
+            <Link href={item.href} style={{
               fontSize: '11px', fontWeight: 500, letterSpacing: '2.5px',
               textTransform: 'uppercase', color: 'var(--light)',
               textDecoration: 'none',
             }}>
-              {item}
+              {item.label}
             </Link>
           </li>
         ))}

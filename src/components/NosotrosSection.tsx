@@ -1,6 +1,6 @@
 export default function NosotrosSection() {
   return (
-    <div style={{
+    <div id="nosotros" style={{
       margin: '0 52px 80px',
       display: 'grid', gridTemplateColumns: '1fr 1fr',
       gap: '2px', overflow: 'hidden',

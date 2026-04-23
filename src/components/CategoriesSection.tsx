@@ -1,9 +1,11 @@
+import Link from 'next/link';
+
 export default function CategoriesSection() {
   const categorias = [
-    { label: 'Coleccion', name: 'Mujer', count: '124 productos', bg: 'linear-gradient(145deg, #2a2a2a, #1a1a1a)', span: true },
-    { label: 'Coleccion', name: 'Hombre', count: '98 productos', bg: 'linear-gradient(145deg, #242424, #181818)', span: false },
-    { label: 'Temporada', name: 'Liquidacion', count: '43 productos', bg: 'linear-gradient(145deg, #202020, #141414)', span: false },
-    { label: 'Lo ultimo', name: 'Novedades', count: '31 productos', bg: 'linear-gradient(145deg, #2c2c2c, #1e1e1e)', span: false },
+    { label: 'Coleccion', name: 'Mujer', count: '124 productos', bg: 'linear-gradient(145deg, #2a2a2a, #1a1a1a)', span: true, href: '/productos?categoria=Mujer' },
+    { label: 'Coleccion', name: 'Hombre', count: '98 productos', bg: 'linear-gradient(145deg, #242424, #181818)', span: false, href: '/productos?categoria=Hombre' },
+    { label: 'Temporada', name: 'Liquidacion', count: '43 productos', bg: 'linear-gradient(145deg, #202020, #141414)', span: false, href: '/productos?categoria=Liquidacion' },
+    { label: 'Lo ultimo', name: 'Novedades', count: '31 productos', bg: 'linear-gradient(145deg, #2c2c2c, #1e1e1e)', span: false, href: '/productos?categoria=Novedades' },
   ];
 
   return (
@@ -38,10 +40,12 @@ export default function CategoriesSection() {
         gap: '2px',
       }}>
         {categorias.map((cat, i) => (
-          <div key={cat.name} style={{
+          <Link key={cat.name} href={cat.href} style={{
             position: 'relative', overflow: 'hidden', cursor: 'pointer',
             background: cat.bg,
             gridRow: cat.span ? 'span 2' : undefined,
+            textDecoration: 'none',
+            display: 'block',
           }}>
             {/* Patrón de puntos */}
             <div style={{
@@ -94,7 +98,7 @@ export default function CategoriesSection() {
                 <path d="M7 17L17 7M7 7h10v10"/>
               </svg>
             </div>
-          </div>
+          </Link>
         ))}
       </div>
     </section>
