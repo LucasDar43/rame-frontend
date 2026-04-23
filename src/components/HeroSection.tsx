@@ -150,7 +150,7 @@ export default function HeroSection() {
           <div style={{ display: 'flex', gap: '44px', justifyContent: 'flex-end' }}>
             {[
               { num: '500+', label: 'Productos' },
-              { num: '3', label: 'Anos' },
+              { num: '3', label: 'Años' },
               { num: '100%', label: 'Familiar' },
             ].map((stat) => (
               <div key={stat.label} style={{ textAlign: 'right' }}>

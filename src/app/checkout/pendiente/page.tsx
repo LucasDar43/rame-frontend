@@ -1,7 +1,10 @@
 'use client';
 
 import type { CSSProperties } from 'react';
-import { useRouter } from 'next/navigation';
+import { Suspense, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+
+import { useOrdenStatus } from '@/hooks/useOrdenStatus';
 
 const layoutStyle: CSSProperties = {
   minHeight: '100vh',
@@ -38,8 +41,28 @@ const primaryButtonStyle: CSSProperties = {
   fontFamily: 'var(--font-dm-sans)',
 };
 
-export default function CheckoutPendientePage() {
+function CheckoutPendienteContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const externalReference = searchParams.get('external_reference');
+  const fallbackOrderId =
+    typeof window !== 'undefined' ? sessionStorage.getItem('lastOrderId') : null;
+  const rawOrderId = externalReference ?? fallbackOrderId;
+  const ordenId = rawOrderId ? Number(rawOrderId) : null;
+  const ordenIdValido = ordenId !== null && Number.isFinite(ordenId) && ordenId > 0;
+
+  const { orden } = useOrdenStatus(ordenIdValido ? ordenId : null);
+
+  useEffect(() => {
+    if (!ordenIdValido) {
+      router.replace('/');
+    }
+  }, [ordenIdValido, router]);
+
+  if (!ordenIdValido) {
+    return null;
+  }
 
   return (
     <main style={layoutStyle}>
@@ -75,6 +98,20 @@ export default function CheckoutPendientePage() {
           Tu pago está siendo procesado
         </h1>
 
+        {orden ? (
+          <p
+            style={{
+              margin: 0,
+              fontSize: '13px',
+              lineHeight: 1.6,
+              color: 'var(--gray)',
+              fontFamily: 'var(--font-dm-sans)',
+            }}
+          >
+            Orden #{orden.id}
+          </p>
+        ) : null}
+
         <p
           style={{
             margin: 0,
@@ -95,11 +132,29 @@ export default function CheckoutPendientePage() {
             marginTop: '8px',
           }}
         >
-          <button type="button" style={primaryButtonStyle} onClick={() => router.push('/')}>
+          <button
+            type="button"
+            style={primaryButtonStyle}
+            onClick={() => router.push('/')}
+          >
             Volver al inicio
           </button>
         </div>
       </section>
     </main>
+  );
+}
+
+export default function CheckoutPendientePage() {
+  return (
+    <Suspense
+      fallback={
+        <div style={layoutStyle}>
+          <div style={cardStyle}>Cargando...</div>
+        </div>
+      }
+    >
+      <CheckoutPendienteContent />
+    </Suspense>
   );
 }

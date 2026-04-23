@@ -65,7 +65,7 @@ export default function NosotrosSection() {
           fontSize: '14px', color: 'var(--light)', lineHeight: 1.8,
           marginBottom: '14px', fontWeight: 300,
         }}>
-          Todo empezo con una pasion compartida. Dylan y Luci abrieron las puertas de Rame Indumentaria con el sueno de acercar ropa deportiva de calidad a su ciudad.
+          Todo empezo con una pasion compartida. Dylan y Luci abrieron las puertas de Rame Indumentaria con el sueño de acercar ropa deportiva de calidad a su pueblo.
         </p>
         <p style={{
           fontSize: '14px', color: 'var(--light)', lineHeight: 1.8,
@@ -101,7 +101,7 @@ export default function NosotrosSection() {
               display: 'block', color: 'var(--white)',
               fontWeight: 600, fontSize: '13px', marginBottom: '2px',
             }}>
-              Dylan, Luci y familia
+              Dylan, Luci y Gianna
             </strong>
             Fundadores de Rame Indumentaria
           </div>

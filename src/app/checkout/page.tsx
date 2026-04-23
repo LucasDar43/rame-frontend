@@ -114,7 +114,7 @@ export default function CheckoutPage() {
       const response = await crearOrden(payload);
 
       if (typeof window !== 'undefined') {
-        window.localStorage.setItem('lastOrderId', String(response.id));
+        sessionStorage.setItem('lastOrderId', String(response.id));
         window.location.href = response.initPoint;
         return;
       }
