@@ -45,6 +45,7 @@ export interface Page<T> {
 
 export interface OrdenItem {
   productoId: number;
+  varianteId: number;
   cantidad: number;
 }
 
@@ -72,7 +73,10 @@ export interface OrdenResponse {
 
 export interface OrdenItemDTO {
   productoId: number;
+  varianteId: number;
   nombreProducto: string;
+  talle: string;
+  color: string;
   imagenUrl?: string;
   cantidad: number;
   precioUnitario: number;

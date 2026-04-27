@@ -104,6 +104,7 @@ export default function CheckoutPage() {
       direccionEnvio: direccion || undefined,
       items: items.map((item) => ({
         productoId: item.productoId,
+        varianteId: item.varianteId,
         cantidad: item.cantidad,
       })),
       costoEnvio,
