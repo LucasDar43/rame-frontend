@@ -2,10 +2,12 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import useCart from '@/hooks/useCart';
 
 export default function Navbar() {
   const [search, setSearch] = useState('');
+  const router = useRouter();
   const { totalItems } = useCart();
   const navItems = [
     { label: 'Mujer', href: '/productos?categoria=Mujer' },
@@ -51,6 +53,12 @@ export default function Navbar() {
             placeholder="Buscar productos..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && search.trim()) {
+                router.push(`/productos?q=${encodeURIComponent(search.trim())}`);
+                setSearch('');
+              }
+            }}
             style={{
               background: 'transparent', border: '1px solid var(--border)',
               padding: '7px 36px 7px 14px', color: 'var(--white)',
