@@ -10,8 +10,6 @@ import {
 } from '@/types';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8080/api';
-console.log('BASE_URL:', BASE_URL);
-
 // Helper interno para los fetches
 async function fetchApi<T>(endpoint: string, options?: RequestInit): Promise<T> {
   const res = await fetch(`${BASE_URL}${endpoint}`, {
