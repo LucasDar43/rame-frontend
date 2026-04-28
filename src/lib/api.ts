@@ -228,3 +228,10 @@ export async function getFiltrosDisponibles(): Promise<{
 }> {
   return fetchApi('/productos/filtros-disponibles');
 }
+
+export async function getConteosCategorias(): Promise<Record<string, number>> {
+  const data = await fetchApi<{ conteos: Record<string, number> }>(
+    '/productos/conteos-categorias'
+  );
+  return data.conteos;
+}
