@@ -45,9 +45,9 @@ export default function ProductoDetalle({ producto, variantes }: Props) {
     if (codigoPostal.length < 4) return;
     setEnvioCargando(true);
     setEnvioCosto(null);
-    // Simulado — reemplazar con API de Correo Argentino
+    // Simulado - reemplazar con API de Correo Argentino
     await new Promise((r) => setTimeout(r, 1000));
-    setEnvioCosto('$2.850 — Llega en 3 a 5 días hábiles');
+    setEnvioCosto('$2.850 - Llega en 3 a 5 días hábiles');
     setEnvioCargando(false);
   };
 
@@ -97,7 +97,7 @@ export default function ProductoDetalle({ producto, variantes }: Props) {
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '80px' }}>
 
-        {/* Columna izquierda — Galería */}
+        {/* Columna izquierda - Galería */}
         <div>
           {/* Imagen principal */}
           <div style={{
@@ -112,7 +112,7 @@ export default function ProductoDetalle({ producto, variantes }: Props) {
                   alt={producto.nombre}
                   style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                 />
-                {/* Flechas de navegaciÃ³n */}
+                {/* Flechas de navegación */}
                 {imagenes.length > 1 && (
                   <>
                     <button
@@ -207,7 +207,7 @@ export default function ProductoDetalle({ producto, variantes }: Props) {
           )}
         </div>
 
-        {/* Columna derecha — Info */}
+        {/* Columna derecha - Info */}
         <div style={{ paddingTop: '8px' }}>
 
           {/* Marca + nombre */}
@@ -233,7 +233,7 @@ export default function ProductoDetalle({ producto, variantes }: Props) {
             ${producto.precio.toLocaleString('es-AR')}
           </div>
 
-          {/* DescripciÃ³n */}
+          {/* Descripción */}
           {producto.descripcion && (
             <p style={{
               fontSize: '14px', color: 'var(--light)', lineHeight: 1.8,
@@ -251,7 +251,7 @@ export default function ProductoDetalle({ producto, variantes }: Props) {
                 fontSize: '10px', fontWeight: 600, letterSpacing: '2px',
                 textTransform: 'uppercase', color: 'var(--gray)', marginBottom: '12px',
               }}>
-                Color {colorSeleccionado && `— ${colorSeleccionado}`}
+                Color {colorSeleccionado && `- ${colorSeleccionado}`}
               </div>
               <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                 {colores.map((color) => (
@@ -283,7 +283,7 @@ export default function ProductoDetalle({ producto, variantes }: Props) {
                 fontSize: '10px', fontWeight: 600, letterSpacing: '2px',
                 textTransform: 'uppercase', color: 'var(--gray)', marginBottom: '12px',
               }}>
-                Talle {talleSeleccionado && `— ${talleSeleccionado}`}
+                Talle {talleSeleccionado && `- ${talleSeleccionado}`}
               </div>
               <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                 {talles.map((talle) => {
@@ -333,7 +333,7 @@ export default function ProductoDetalle({ producto, variantes }: Props) {
             </div>
           )}
 
-          {/* BotÃ³n agregar */}
+          {/* Botón agregar */}
           <button
             onClick={handleAgregarAlCarrito}
             disabled={!varianteSeleccionada || varianteSeleccionada.stock === 0}
@@ -356,7 +356,7 @@ export default function ProductoDetalle({ producto, variantes }: Props) {
               : 'Sin stock'}
           </button>
 
-          {/* â”€â”€ Calcular envio â”€â”€ */}
+          {/* Calcular envío */}
           <div style={{
             marginTop: '28px', padding: '20px',
             border: '1px solid var(--border)', background: '#fafafa',
@@ -365,12 +365,12 @@ export default function ProductoDetalle({ producto, variantes }: Props) {
               fontSize: '10px', fontWeight: 700, letterSpacing: '2px',
               textTransform: 'uppercase', color: 'var(--white)', marginBottom: '14px',
             }}>
-              Calcular envio
+              Calcular envío
             </div>
             <div style={{ display: 'flex', gap: '8px' }}>
               <input
                 type="text"
-                placeholder="Codigo postal"
+                placeholder="Código postal"
                 value={codigoPostal}
                 onChange={(e) => {
                   setCodigoPostal(e.target.value.replace(/\D/g, '').slice(0, 8));
@@ -425,9 +425,9 @@ export default function ProductoDetalle({ producto, variantes }: Props) {
             display: 'flex', flexDirection: 'column', gap: '12px',
           }}>
             {[
-              'Envio a domicilio disponible',
+              'Envío a domicilio disponible',
               'Retiro gratis en local',
-              'Cambios dentro de los 30 dias',
+              'Cambios dentro de los 30 días',
             ].map((texto) => (
               <div key={texto} style={{
                 display: 'flex', alignItems: 'center', gap: '10px',

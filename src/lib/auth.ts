@@ -65,6 +65,23 @@ export function isAuthenticated(): boolean {
   return Boolean(getToken());
 }
 
+export async function verificarSesion(): Promise<boolean> {
+  const token = getToken();
+  if (!token) return false;
+
+  try {
+    const response = await fetch(`${BASE_URL}/auth/me`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return response.ok;
+  } catch {
+    return false;
+  }
+}
+
 export function getUser(): User | null {
   if (!canUseStorage()) {
     return null;
@@ -78,4 +95,26 @@ export function getUser(): User | null {
   }
 
   return { email, rol };
+}
+
+export function isTokenExpired(): boolean {
+  const token = getToken();
+  if (!token) return true;
+
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    const expMs = payload.exp * 1000;
+    return Date.now() >= expMs;
+  } catch {
+    return true;
+  }
+}
+
+export function isAdmin(): boolean {
+  const user = getUser();
+  return user?.rol === 'ADMIN';
+}
+
+export function isAuthenticatedAndValid(): boolean {
+  return isAuthenticated() && !isTokenExpired() && isAdmin();
 }
