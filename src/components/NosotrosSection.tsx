@@ -2,37 +2,30 @@ export default function NosotrosSection() {
   return (
     <div id="nosotros" style={{
       margin: '0 52px 80px',
-      display: 'grid', gridTemplateColumns: '1fr 1fr',
-      gap: '2px', overflow: 'hidden',
+      display: 'grid', gridTemplateColumns: '0.7fr 1.3fr',
+      gap: '0px', overflow: 'hidden',
     }}>
-      {/* Imagen placeholder */}
-      <div style={{ position: 'relative', height: '540px', background: '#e8e8e8', overflow: 'hidden' }}>
-        <div style={{
-          position: 'absolute', inset: 0,
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-        }}>
-          <div style={{
-            display: 'flex', flexDirection: 'column',
-            alignItems: 'center', gap: '14px', opacity: 0.15,
-          }}>
-            <svg width="44" height="44" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" strokeWidth="1">
-              <rect x="3" y="3" width="18" height="18" rx="2"/>
-              <circle cx="8.5" cy="8.5" r="1.5"/>
-              <polyline points="21 15 16 10 5 21"/>
-            </svg>
-            <span style={{
-              fontSize: '10px', letterSpacing: '3px',
-              textTransform: 'uppercase', color: 'var(--white)',
-            }}>
-              Foto de la familia
-            </span>
-          </div>
-        </div>
-        <div style={{
-          position: 'absolute', inset: 0,
-          background: 'linear-gradient(to right, transparent 50%, #ffffff)',
-        }}/>
+      <div
+        style={{
+          position: 'relative',
+          height: '540px',
+          width: '100%',
+          overflow: 'hidden',
+        }}
+      >
+        <img
+          src="/images/familia.png"
+          alt="Foto de la familia"
+          style={{
+            position: 'absolute',
+            inset: 0,
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            objectPosition: 'center',
+          }}
+        />
+
       </div>
 
       {/* Contenido */}
