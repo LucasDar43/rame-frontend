@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { getProducto, getVariantes } from '@/lib/api';
 import { Producto, Variante } from '@/types';
 import ProductoEditForm from './components/ProductoEditForm';
+import ImagenProductoForm from './components/ImagenProductoForm';
 import VariantesManager from './components/VariantesManager';
 
 export default function EditProductoPage() {
@@ -56,6 +57,10 @@ export default function EditProductoPage() {
       active = false;
     };
   }, [productoId]);
+
+  const handleImagenActualizada = (productoActualizado: Producto) => {
+    setProducto(productoActualizado);
+  };
 
   return (
     <main
@@ -158,6 +163,20 @@ export default function EditProductoPage() {
               }}
             >
               <ProductoEditForm producto={producto} />
+            </section>
+
+            <section
+              style={{
+                border: '1px solid var(--border)',
+                background: '#ffffff',
+                overflow: 'hidden',
+                marginBottom: '24px',
+              }}
+            >
+              <ImagenProductoForm
+                producto={producto}
+                onActualizado={handleImagenActualizada}
+              />
             </section>
 
             <section

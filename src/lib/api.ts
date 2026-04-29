@@ -91,6 +91,37 @@ export async function actualizarProducto(id: number, data: Partial<Producto>): P
   });
 }
 
+export async function actualizarImagenProducto(
+  id: number,
+  imagen: File
+): Promise<Producto> {
+  const formData = new FormData();
+  formData.append('imagen', imagen);
+
+  const res = await fetch(`${BASE_URL}/productos/${id}/imagen`, {
+    method: 'PUT',
+    headers: authHeaders(),
+    body: formData,
+  });
+
+  if (res.status === 401 || res.status === 403) {
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('token');
+      localStorage.removeItem('email');
+      localStorage.removeItem('rol');
+      window.location.href = '/admin/login';
+    }
+    throw new Error('Sesión expirada');
+  }
+
+  if (!res.ok) {
+    const error = await res.json().catch(() => ({}));
+    throw new Error(error.mensaje || `Error ${res.status}`);
+  }
+
+  return res.json();
+}
+
 export async function eliminarProducto(id: number): Promise<void> {
   return fetchApi(`/productos/${id}`, {
     method: 'DELETE',
