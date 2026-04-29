@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import ProductCard from '@/components/ProductCard';
 import { Producto } from '@/types';
 
@@ -18,7 +19,7 @@ export default function FeaturedSection({ productos }: FeaturedSectionProps) {
         }}>
           Productos <em style={{ fontStyle: 'italic', opacity: 0.5 }}>destacados</em>
         </h2>
-        <a href="#" style={{
+        <Link href="/productos" style={{
           display: 'flex', alignItems: 'center', gap: '8px',
           fontSize: '11px', fontWeight: 500, letterSpacing: '2px',
           textTransform: 'uppercase', color: 'var(--light)', textDecoration: 'none',
@@ -28,7 +29,7 @@ export default function FeaturedSection({ productos }: FeaturedSectionProps) {
             stroke="currentColor" strokeWidth="1.5">
             <path d="M5 12h14M12 5l7 7-7 7"/>
           </svg>
-        </a>
+        </Link>
       </div>
 
       {productos.length === 0 ? (

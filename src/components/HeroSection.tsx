@@ -1,6 +1,20 @@
 import Link from 'next/link';
+import { getConteosCategorias } from '@/lib/api';
 
-export default function HeroSection() {
+export default async function HeroSection() {
+  let totalProductos = 500;
+
+  try {
+    const conteos = await getConteosCategorias();
+    const suma = Object.values(conteos).reduce((acc, n) => acc + n, 0);
+    if (suma > 0) totalProductos = suma;
+  } catch {
+  }
+
+  const statsProductos = totalProductos >= 1000
+    ? `${Math.floor(totalProductos / 100) * 100}+`
+    : `${totalProductos}+`;
+
   return (
     <section style={{
       height: '100vh', position: 'relative',
@@ -155,7 +169,7 @@ export default function HeroSection() {
         <div style={{ animation: 'fadeUp 0.6s ease 0.8s both' }}>
           <div style={{ display: 'flex', gap: '44px', justifyContent: 'flex-end' }}>
             {[
-              { num: '500+', label: 'Productos' },
+              { num: statsProductos, label: 'Productos' },
               { num: '3', label: 'Años' },
               { num: '100%', label: 'Familiar' },
             ].map((stat) => (

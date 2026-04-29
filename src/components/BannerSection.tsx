@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 export default function BannerSection() {
   return (
     <div style={{
@@ -38,16 +40,24 @@ export default function BannerSection() {
         </p>
       </div>
 
-      <button style={{
-        background: '#ffffff', color: 'var(--white)',
-        border: 'none', padding: '16px 44px',
-        fontFamily: 'var(--font-dm-sans)', fontWeight: 600,
-        fontSize: '11px', letterSpacing: '2.5px',
-        textTransform: 'uppercase', cursor: 'pointer',
-        position: 'relative', zIndex: 1, flexShrink: 0,
+      <Link href="/productos?categoria=Liquidacion" style={{
+        background: '#ffffff',
+        color: 'var(--white)',
+        display: 'inline-block',
+        padding: '16px 44px',
+        fontFamily: 'var(--font-dm-sans)',
+        fontWeight: 600,
+        fontSize: '11px',
+        letterSpacing: '2.5px',
+        textTransform: 'uppercase',
+        cursor: 'pointer',
+        position: 'relative',
+        zIndex: 1,
+        flexShrink: 0,
+        textDecoration: 'none',
       }}>
         Ver liquidacion
-      </button>
+      </Link>
     </div>
   );
 }

@@ -59,7 +59,7 @@ export default async function CategoriesSection() {
           Explorar{' '}
           <em style={{ fontStyle: 'italic', opacity: 0.5 }}>categorias</em>
         </h2>
-        <a href="#" style={{
+        <Link href="/productos" style={{
           display: 'flex',
           alignItems: 'center',
           gap: '8px',
@@ -75,7 +75,7 @@ export default async function CategoriesSection() {
             stroke="currentColor" strokeWidth="1.5">
             <path d="M5 12h14M12 5l7 7-7 7"/>
           </svg>
-        </a>
+        </Link>
       </div>
 
       <div style={{

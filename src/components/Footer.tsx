@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 export default function Footer() {
   return (
     <>
@@ -52,15 +54,33 @@ export default function Footer() {
               {col.title}
             </div>
             <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              {col.links.map((link) => (
-                <li key={link}>
-                  <a href="#" style={{
-                    fontSize: '13px', color: 'var(--gray)', textDecoration: 'none',
-                  }}>
-                    {link}
-                  </a>
-                </li>
-              ))}
+              {col.links.map((link) => {
+                const tiendaHrefs: Record<string, string> = {
+                  Mujer: '/productos?categoria=Mujer',
+                  Hombre: '/productos?categoria=Hombre',
+                  Liquidacion: '/productos?categoria=Liquidacion',
+                  Novedades: '/productos?categoria=Novedades',
+                };
+                const href = tiendaHrefs[link];
+
+                return (
+                  <li key={link}>
+                    {col.title === 'Tienda' && href ? (
+                      <Link href={href} style={{
+                        fontSize: '13px', color: 'var(--gray)', textDecoration: 'none',
+                      }}>
+                        {link}
+                      </Link>
+                    ) : (
+                      <a href="#" style={{
+                        fontSize: '13px', color: 'var(--gray)', textDecoration: 'none',
+                      }}>
+                        {link}
+                      </a>
+                    )}
+                  </li>
+                );
+              })}
             </ul>
           </div>
         ))}
