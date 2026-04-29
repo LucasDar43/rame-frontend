@@ -149,7 +149,9 @@ export async function crearOrden(data: OrdenRequest): Promise<OrdenResponse> {
 }
 
 export async function getOrden(id: number): Promise<OrdenResponse> {
-  return fetchApi(`/ordenes/${id}`);
+  return fetchApi(`/ordenes/${id}`, {
+    headers: authHeaders(),
+  });
 }
 
 export async function getOrdenes(page = 0, size = 10): Promise<Page<OrdenResumen>> {
