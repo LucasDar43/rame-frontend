@@ -1,7 +1,7 @@
 'use client';
 
 import { Suspense, useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 import ProductCard from '@/components/ProductCard';
 import { buscarProductosFiltrado, getFiltrosDisponibles } from '@/lib/api';
@@ -10,25 +10,38 @@ import { Producto } from '@/types';
 const categorias = ['Todas', 'Mujer', 'Hombre', 'Liquidacion', 'Novedades'];
 
 function ProductosContent() {
+  const router = useRouter();
   const searchParams = useSearchParams();
-  const categoriaInicial = searchParams.get('categoria') ?? 'Todas';
   const [productos, setProductos] = useState<Producto[]>([]);
-  const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [categoriaActiva, setCategoriaActiva] = useState(categoriaInicial);
   const [totalElements, setTotalElements] = useState(0);
-  const [marca, setMarca] = useState<string>('');
-  const [color, setColor] = useState<string>('');
-  const [talle, setTalle] = useState<string>('');
-  const [ordenar, setOrdenar] = useState<string>('');
   const [filtrosDisponibles, setFiltrosDisponibles] = useState<{
     marcas: string[];
     colores: string[];
     talles: string[];
   }>({ marcas: [], colores: [], talles: [] });
-  const [q, setQ] = useState<string>(searchParams.get('q') ?? '');
+
+  const q = searchParams.get('q') ?? '';
+  const categoriaActiva = searchParams.get('categoria') ?? 'Todas';
+  const marca = searchParams.get('marca') ?? '';
+  const color = searchParams.get('color') ?? '';
+  const talle = searchParams.get('talle') ?? '';
+  const ordenar = searchParams.get('ordenar') ?? '';
+  const page = Number(searchParams.get('page') ?? '0');
+
+  function setFiltros(cambios: Record<string, string>) {
+    const params = new URLSearchParams(searchParams.toString());
+    Object.entries(cambios).forEach(([key, value]) => {
+      if (value === '' || value === 'Todas' || value === '0') {
+        params.delete(key);
+      } else {
+        params.set(key, value);
+      }
+    });
+    router.replace(`/productos?${params.toString()}`, { scroll: false });
+  }
 
   useEffect(() => {
     let active = true;
@@ -77,33 +90,12 @@ function ProductosContent() {
       .catch(() => {});
   }, []);
 
-  useEffect(() => {
-    const qParam = searchParams.get('q') ?? '';
-    setQ(qParam);
-    setPage(0);
-  }, [searchParams]);
-
-  useEffect(() => {
-    const categoria = searchParams.get('categoria') ?? 'Todas';
-    setCategoriaActiva(categoria);
-    setPage(0);
-  }, [searchParams]);
-
   function resetFiltros() {
-    setMarca('');
-    setColor('');
-    setTalle('');
-    setOrdenar('');
-    setCategoriaActiva('Todas');
-    setPage(0);
+    router.replace('/productos', { scroll: false });
   }
 
   function handleCategoriaChange(categoria: string) {
-    setCategoriaActiva(categoria);
-    setMarca('');
-    setColor('');
-    setTalle('');
-    setPage(0);
+    setFiltros({ categoria, marca: '', color: '', talle: '', page: '0' });
   }
 
   return (
@@ -203,8 +195,7 @@ function ProductosContent() {
             <select
               value={ordenar}
               onChange={(e) => {
-                setOrdenar(e.target.value);
-                setPage(0);
+                setFiltros({ ordenar: e.target.value, page: '0' });
               }}
               style={{
                 width: '100%',
@@ -258,8 +249,7 @@ function ProductosContent() {
                       type="checkbox"
                       checked={marca === m}
                       onChange={() => {
-                        setMarca(marca === m ? '' : m);
-                        setPage(0);
+                        setFiltros({ marca: marca === m ? '' : m, page: '0' });
                       }}
                       style={{ cursor: 'pointer', accentColor: '#111111' }}
                     />
@@ -302,8 +292,7 @@ function ProductosContent() {
                       type="checkbox"
                       checked={color === c}
                       onChange={() => {
-                        setColor(color === c ? '' : c);
-                        setPage(0);
+                        setFiltros({ color: color === c ? '' : c, page: '0' });
                       }}
                       style={{ cursor: 'pointer', accentColor: '#111111' }}
                     />
@@ -334,8 +323,7 @@ function ProductosContent() {
                     key={t}
                     type="button"
                     onClick={() => {
-                      setTalle(talle === t ? '' : t);
-                      setPage(0);
+                      setFiltros({ talle: talle === t ? '' : t, page: '0' });
                     }}
                     style={{
                       padding: '6px 12px',
@@ -441,7 +429,7 @@ function ProductosContent() {
               <button
                 type="button"
                 disabled={page === 0}
-                onClick={() => setPage((p) => p - 1)}
+                onClick={() => setFiltros({ page: String(Math.max(page - 1, 0)) })}
                 style={{
                   minWidth: '120px',
                   height: '42px',
@@ -464,7 +452,7 @@ function ProductosContent() {
               <button
                 type="button"
                 disabled={page >= totalPages - 1}
-                onClick={() => setPage((p) => p + 1)}
+                onClick={() => setFiltros({ page: String(Math.min(page + 1, totalPages - 1)) })}
                 style={{
                   minWidth: '120px',
                   height: '42px',
