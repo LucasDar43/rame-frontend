@@ -6,18 +6,23 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import useCart from '@/hooks/useCart';
-import { crearOrden } from '@/lib/api';
-import type { OrdenRequest } from '@/types';
+import { calcularEnvio, crearOrden } from '@/lib/api';
+import type { EnvioResponse, OrdenRequest } from '@/types';
 
 const EMPTY_FORM = {
   nombre: '',
   email: '',
   telefono: '',
-  direccion: '',
+  calle: '',
+  numero: '',
+  pisoDpto: '',
+  codigoPostal: '',
+  ciudad: '',
+  provincia: '',
 };
 
 type FormState = typeof EMPTY_FORM;
-type FieldErrors = Partial<Record<'nombre' | 'email', string>>;
+type FieldErrors = Partial<Record<'nombre' | 'email' | 'codigoPostal', string>>;
 
 function formatPrice(value: number) {
   return `$${value.toLocaleString('es-AR')}`;
@@ -31,6 +36,9 @@ export default function CheckoutPage() {
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [envioInfo, setEnvioInfo] = useState<EnvioResponse | null>(null);
+  const [envioLoading, setEnvioLoading] = useState(false);
+  const [codigoPostalConsultado, setCodigoPostalConsultado] = useState('');
 
   useEffect(() => {
     if (items.length === 0) {
@@ -42,14 +50,19 @@ export default function CheckoutPage() {
     (accumulator, item) => accumulator + item.precio * item.cantidad,
     0
   );
-  const costoEnvio = subtotal < 50000 ? 3000 : 0;
+  const costoEnvio = envioInfo?.costo ?? (subtotal < 80000 ? 3500 : 0);
   const totalFinal = subtotal + costoEnvio;
   const envioEsGratis = costoEnvio === 0;
 
   const handleChange = (field: keyof FormState, value: string) => {
     setForm((current) => ({ ...current, [field]: value }));
 
-    if (field === 'nombre' || field === 'email') {
+    if (field === 'codigoPostal') {
+      setEnvioInfo(null);
+      setCodigoPostalConsultado('');
+    }
+
+    if (field === 'nombre' || field === 'email' || field === 'codigoPostal') {
       setFieldErrors((current) => {
         if (!current[field]) {
           return current;
@@ -62,6 +75,21 @@ export default function CheckoutPage() {
     }
   };
 
+  const calcularCostoEnvio = async (cp: string) => {
+    if (cp.length < 4) return;
+    if (cp === codigoPostalConsultado) return;
+    setEnvioLoading(true);
+    try {
+      const info = await calcularEnvio(cp, subtotal);
+      setEnvioInfo(info);
+      setCodigoPostalConsultado(cp);
+    } catch {
+      setEnvioInfo(null);
+    } finally {
+      setEnvioLoading(false);
+    }
+  };
+
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -71,8 +99,6 @@ export default function CheckoutPage() {
 
     const nombre = form.nombre.trim();
     const email = form.email.trim();
-    const telefono = form.telefono.trim();
-    const direccion = form.direccion.trim();
 
     const nextFieldErrors: FieldErrors = {};
 
@@ -94,21 +120,21 @@ export default function CheckoutPage() {
     setError('');
     setLoading(true);
 
-    const payload: OrdenRequest & {
-      costoEnvio: number;
-      totalFinal: number;
-    } = {
+    const payload: OrdenRequest = {
       nombreComprador: nombre,
       emailComprador: email,
-      telefonoComprador: telefono || undefined,
-      direccionEnvio: direccion || undefined,
+      telefonoComprador: form.telefono.trim() || undefined,
+      direccionEnvio: form.calle.trim() || undefined,
+      numeroDireccion: form.numero.trim() || undefined,
+      pisoDpto: form.pisoDpto.trim() || undefined,
+      codigoPostal: form.codigoPostal.trim() || undefined,
+      ciudadEnvio: form.ciudad.trim() || undefined,
+      provinciaEnvio: form.provincia.trim() || undefined,
       items: items.map((item) => ({
         productoId: item.productoId,
         varianteId: item.varianteId,
         cantidad: item.cantidad,
       })),
-      costoEnvio,
-      totalFinal,
     };
 
     try {
@@ -288,15 +314,111 @@ export default function CheckoutPage() {
                 />
               </Field>
 
-              <Field label="Direccion de envio">
+              <Field label="Calle">
                 <input
                   type="text"
-                  value={form.direccion}
-                  onChange={(event) => handleChange('direccion', event.target.value)}
+                  value={form.calle}
+                  onChange={(event) => handleChange('calle', event.target.value)}
                   disabled={loading}
                   style={inputStyle}
-                  placeholder="Opcional"
-                  autoComplete="street-address"
+                  placeholder="Nombre de la calle"
+                  autoComplete="address-line1"
+                />
+              </Field>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                <Field label="Numero">
+                  <input
+                    type="text"
+                    value={form.numero}
+                    onChange={(event) => handleChange('numero', event.target.value)}
+                    disabled={loading}
+                    style={inputStyle}
+                    placeholder="1234"
+                  />
+                </Field>
+
+                <Field label="Piso / Depto">
+                  <input
+                    type="text"
+                    value={form.pisoDpto}
+                    onChange={(event) => handleChange('pisoDpto', event.target.value)}
+                    disabled={loading}
+                    style={inputStyle}
+                    placeholder="Opcional"
+                  />
+                </Field>
+              </div>
+
+              <Field label="Codigo postal">
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <input
+                    type="text"
+                    value={form.codigoPostal}
+                    onChange={(event) => {
+                      const val = event.target.value.replace(/\D/g, '').slice(0, 8);
+                      handleChange('codigoPostal', val);
+                    }}
+                    onBlur={() => calcularCostoEnvio(form.codigoPostal)}
+                    disabled={loading}
+                    style={{ ...inputStyle, flex: 1 }}
+                    placeholder="Ej. 3350"
+                    autoComplete="postal-code"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => calcularCostoEnvio(form.codigoPostal)}
+                    disabled={form.codigoPostal.length < 4 || envioLoading || loading}
+                    style={{
+                      height: '46px',
+                      padding: '0 16px',
+                      border: 'none',
+                      background: form.codigoPostal.length >= 4 ? 'var(--accent)' : '#cccccc',
+                      color: '#ffffff',
+                      fontSize: '12px',
+                      fontWeight: 600,
+                      cursor: form.codigoPostal.length >= 4 ? 'pointer' : 'not-allowed',
+                      fontFamily: 'var(--font-dm-sans)',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    {envioLoading ? '...' : 'Calcular'}
+                  </button>
+                </div>
+                {envioInfo && !envioLoading && (
+                  <p style={{
+                    margin: '6px 0 0',
+                    fontSize: '12px',
+                    color: envioInfo.costo === 0 ? '#027a48' : 'var(--gray)',
+                  }}>
+                    {envioInfo.costo === 0
+                      ? 'Envio gratis'
+                      : `$${envioInfo.costo.toLocaleString('es-AR')} — ${envioInfo.descripcion}`}
+                  </p>
+                )}
+              </Field>
+
+              <Field label="Ciudad">
+                <input
+                  type="text"
+                  value={form.ciudad}
+                  onChange={(event) => handleChange('ciudad', event.target.value)}
+                  disabled={loading}
+                  style={inputStyle}
+                  placeholder="Ej. Vera"
+                  autoComplete="address-level2"
+                />
+              </Field>
+
+              <Field label="Provincia">
+                <input
+                  type="text"
+                  value={form.provincia}
+                  onChange={(event) => handleChange('provincia', event.target.value)}
+                  disabled={loading}
+                  style={inputStyle}
+                  placeholder="Ej. Santa Fe"
+                  autoComplete="address-level1"
                 />
               </Field>
 
@@ -451,23 +573,25 @@ export default function CheckoutPage() {
                   </span>
                 </div>
 
-                <div
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    gap: '16px',
-                    fontSize: '13px',
-                    color: 'var(--gray)',
-                  }}
-                >
-                  <span>Envío</span>
-                  <span
-                    style={{
-                      color: envioEsGratis ? '#15803d' : 'var(--black)',
-                      fontWeight: envioEsGratis ? 600 : 400,
-                    }}
-                  >
-                    {envioEsGratis ? 'Envío gratis' : formatPrice(costoEnvio)}
+                <div style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  gap: '16px',
+                  fontSize: '13px',
+                  color: 'var(--gray)',
+                }}>
+                  <span>Envio</span>
+                  <span style={{
+                    color: envioEsGratis ? '#15803d' : 'var(--black)',
+                    fontWeight: envioEsGratis ? 600 : 400,
+                  }}>
+                    {envioLoading
+                      ? 'Calculando...'
+                      : envioEsGratis
+                      ? 'Envio gratis'
+                      : envioInfo
+                      ? `$${costoEnvio.toLocaleString('es-AR')}`
+                      : 'Ingresa tu CP'}
                   </span>
                 </div>
 

@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Producto, Variante } from '@/types';
 import useCart from '@/hooks/useCart';
+import { calcularEnvio } from '@/lib/api';
 
 interface Props {
   producto: Producto;
@@ -15,6 +16,7 @@ export default function ProductoDetalle({ producto, variantes }: Props) {
   const [colorSeleccionado, setColorSeleccionado] = useState<string | null>(null);
   const [codigoPostal, setCodigoPostal] = useState('');
   const [envioCosto, setEnvioCosto] = useState<string | null>(null);
+  const [envioDescripcion, setEnvioDescripcion] = useState<string | null>(null);
   const [envioCargando, setEnvioCargando] = useState(false);
   const [agregado, setAgregado] = useState(false);
   const agregadoTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -41,14 +43,26 @@ export default function ProductoDetalle({ producto, variantes }: Props) {
     };
   }, []);
 
-  const calcularEnvio = async () => {
+  const handleCalcularEnvio = async () => {
     if (codigoPostal.length < 4) return;
     setEnvioCargando(true);
     setEnvioCosto(null);
-    // Simulado - reemplazar con API de Correo Argentino
-    await new Promise((r) => setTimeout(r, 1000));
-    setEnvioCosto('$2.850 - Llega en 3 a 5 días hábiles');
-    setEnvioCargando(false);
+    setEnvioDescripcion(null);
+    try {
+      const info = await calcularEnvio(codigoPostal, producto.precio);
+      if (info.costo === 0) {
+        setEnvioCosto('Envio gratis');
+        setEnvioDescripcion(null);
+      } else {
+        setEnvioCosto(`$${info.costo.toLocaleString('es-AR')}`);
+        setEnvioDescripcion(info.descripcion);
+      }
+    } catch {
+      setEnvioCosto('No se pudo calcular el envio');
+      setEnvioDescripcion(null);
+    } finally {
+      setEnvioCargando(false);
+    }
   };
 
   const handleAgregarAlCarrito = () => {
@@ -375,6 +389,7 @@ export default function ProductoDetalle({ producto, variantes }: Props) {
                 onChange={(e) => {
                   setCodigoPostal(e.target.value.replace(/\D/g, '').slice(0, 8));
                   setEnvioCosto(null);
+                  setEnvioDescripcion(null);
                 }}
                 style={{
                   flex: 1, padding: '10px 14px', fontSize: '13px',
@@ -384,7 +399,7 @@ export default function ProductoDetalle({ producto, variantes }: Props) {
                 }}
               />
               <button
-                onClick={calcularEnvio}
+                onClick={handleCalcularEnvio}
                 disabled={codigoPostal.length < 4 || envioCargando}
                 style={{
                   padding: '10px 20px', fontSize: '11px', fontWeight: 600,
@@ -413,7 +428,14 @@ export default function ProductoDetalle({ producto, variantes }: Props) {
                   <circle cx="5.5" cy="18.5" r="2.5"/>
                   <circle cx="18.5" cy="18.5" r="2.5"/>
                 </svg>
-                {envioCosto}
+                <span>
+                  {envioCosto}
+                  {envioDescripcion && (
+                    <span style={{ color: 'var(--gray)', marginLeft: '6px' }}>
+                      — {envioDescripcion}
+                    </span>
+                  )}
+                </span>
               </div>
             )}
           </div>

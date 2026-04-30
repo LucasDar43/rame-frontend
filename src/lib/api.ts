@@ -7,6 +7,7 @@ import {
   OrdenResponse,
   OrdenResumen,
   ImportacionResultado,
+  EnvioResponse,
 } from '@/types';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8080/api';
@@ -267,4 +268,13 @@ export async function getConteosCategorias(): Promise<Record<string, number>> {
     '/productos/conteos-categorias'
   );
   return data.conteos;
+}
+
+export async function calcularEnvio(
+  codigoPostal: string,
+  subtotal: number
+): Promise<EnvioResponse> {
+  return fetchApi(
+    `/envio/calcular?codigoPostal=${encodeURIComponent(codigoPostal)}&subtotal=${subtotal}`
+  );
 }

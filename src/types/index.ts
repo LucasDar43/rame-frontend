@@ -54,6 +54,9 @@ export interface OrdenRequest {
   emailComprador: string;
   telefonoComprador?: string;
   direccionEnvio?: string;
+  numeroDireccion?: string;
+  pisoDpto?: string;
+  codigoPostal?: string;
   ciudadEnvio?: string;
   provinciaEnvio?: string;
   items: OrdenItem[];
@@ -101,4 +104,11 @@ export interface OrdenResumen {
   total: number;
   estado: 'PENDIENTE' | 'APROBADO' | 'RECHAZADO' | 'CANCELADO';
   fechaCreacion: string;
+}
+
+export interface EnvioResponse {
+  costo: number;
+  zona: string;
+  descripcion: string;
+  umbralEnvioGratis: number;
 }
