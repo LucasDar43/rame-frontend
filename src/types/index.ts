@@ -3,6 +3,7 @@ export interface Producto {
   nombre: string;
   descripcion: string;
   precio: number;
+  precioOriginal?: number;
   marca: string;
   categoria: string;
   subcategoria?: string;
@@ -111,4 +112,25 @@ export interface EnvioResponse {
   zona: string;
   descripcion: string;
   umbralEnvioGratis: number;
+}
+
+export interface CuponResponse {
+  id: number;
+  codigo: string;
+  porcentaje: number;
+  activo: boolean;
+  fechaCreacion: string;
+}
+
+export interface CuponRequest {
+  codigo: string;
+  porcentaje: number;
+  activo: boolean;
+}
+
+export interface CuponValido {
+  codigo: string;
+  porcentaje?: number;
+  valido: boolean;
+  mensaje: string;
 }

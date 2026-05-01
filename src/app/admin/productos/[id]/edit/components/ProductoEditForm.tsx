@@ -13,6 +13,7 @@ type FormState = {
   nombre: string;
   descripcion: string;
   precio: string;
+  precioOriginal: string;
   marca: string;
   categoria: string;
   subcategoria: string;
@@ -37,6 +38,7 @@ function getInitialFormState(producto: Producto): FormState {
     nombre: producto.nombre,
     descripcion: producto.descripcion ?? '',
     precio: String(producto.precio),
+    precioOriginal: producto.precioOriginal ? String(producto.precioOriginal) : '',
     marca: producto.marca,
     categoria: producto.categoria,
     subcategoria: producto.subcategoria ?? '',
@@ -57,6 +59,7 @@ export default function ProductoEditForm({
       nombre: producto.nombre,
       descripcion: producto.descripcion ?? '',
       precio: String(producto.precio),
+      precioOriginal: producto.precioOriginal ? String(producto.precioOriginal) : '',
       marca: producto.marca,
       categoria: producto.categoria,
       subcategoria: producto.subcategoria ?? '',
@@ -104,6 +107,9 @@ export default function ProductoEditForm({
         nombre: form.nombre.trim(),
         descripcion: form.descripcion.trim(),
         precio: precioNumerico,
+        precioOriginal: form.precioOriginal
+          ? Number(form.precioOriginal)
+          : undefined,
         marca: form.marca.trim(),
         categoria: form.categoria,
         subcategoria: form.subcategoria.trim() || undefined,
@@ -180,6 +186,22 @@ export default function ProductoEditForm({
               required
               disabled={loading}
               style={inputStyle}
+            />
+          </Field>
+
+          <Field label="Precio original (opcional)">
+            <input
+              type="number"
+              min="0.01"
+              step="0.01"
+              inputMode="decimal"
+              value={form.precioOriginal}
+              onChange={(event) =>
+                setForm((current) => ({ ...current, precioOriginal: event.target.value }))
+              }
+              disabled={loading}
+              style={inputStyle}
+              placeholder="Precio antes del descuento"
             />
           </Field>
 

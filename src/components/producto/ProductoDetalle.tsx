@@ -243,11 +243,25 @@ export default function ProductoDetalle({ producto, variantes }: Props) {
           </h1>
 
           {/* Precio */}
-          <div style={{
-            fontFamily: 'var(--font-playfair)', fontWeight: 700,
-            fontSize: '32px', color: 'var(--white)', marginBottom: '32px',
-          }}>
-            ${producto.precio.toLocaleString('es-AR')}
+          <div style={{ marginBottom: '32px' }}>
+            {producto.precioOriginal && producto.precioOriginal > producto.precio && (
+              <div style={{
+                fontSize: '18px',
+                color: 'var(--gray)',
+                textDecoration: 'line-through',
+                marginBottom: '4px',
+              }}>
+                ${producto.precioOriginal.toLocaleString('es-AR')}
+              </div>
+            )}
+            <div style={{
+              fontFamily: 'var(--font-playfair)',
+              fontWeight: 700,
+              fontSize: '32px',
+              color: 'var(--white)',
+            }}>
+              ${producto.precio.toLocaleString('es-AR')}
+            </div>
           </div>
 
           {/* Descripción */}

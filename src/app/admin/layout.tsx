@@ -88,6 +88,11 @@ function Sidebar() {
           label="Órdenes"
           onClick={() => router.push('/admin/ordenes')}
         />
+        <SidebarItem
+          active={pathname.includes('/admin/cupones')}
+          label="Cupones"
+          onClick={() => router.push('/admin/cupones')}
+        />
       </nav>
     </aside>
   );

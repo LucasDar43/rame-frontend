@@ -6,8 +6,8 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import useCart from '@/hooks/useCart';
-import { calcularEnvio, crearOrden } from '@/lib/api';
-import type { EnvioResponse, OrdenRequest } from '@/types';
+import { calcularEnvio, crearOrden, validarCupon } from '@/lib/api';
+import type { CuponValido, EnvioResponse, OrdenRequest } from '@/types';
 
 const EMPTY_FORM = {
   nombre: '',
@@ -42,6 +42,10 @@ export default function CheckoutPage() {
   const [envioInfo, setEnvioInfo] = useState<EnvioResponse | null>(null);
   const [envioLoading, setEnvioLoading] = useState(false);
   const [codigoPostalConsultado, setCodigoPostalConsultado] = useState('');
+  const [cuponCodigo, setCuponCodigo] = useState('');
+  const [cuponInfo, setCuponInfo] = useState<CuponValido | null>(null);
+  const [cuponLoading, setCuponLoading] = useState(false);
+  const [cuponError, setCuponError] = useState('');
 
   useEffect(() => {
     if (items.length === 0) {
@@ -62,8 +66,12 @@ export default function CheckoutPage() {
     (accumulator, item) => accumulator + item.precio * item.cantidad,
     0
   );
-  const costoEnvio = envioInfo?.costo ?? (subtotal < 80000 ? 3500 : 0);
-  const totalFinal = subtotal + costoEnvio;
+  const descuento = cuponInfo?.valido && cuponInfo.porcentaje
+    ? Math.round(subtotal * cuponInfo.porcentaje / 100)
+    : 0;
+  const subtotalConDescuento = subtotal - descuento;
+  const costoEnvio = envioInfo?.costo ?? (subtotalConDescuento < 80000 ? 3500 : 0);
+  const totalFinal = subtotalConDescuento + costoEnvio;
   const envioEsGratis = costoEnvio === 0;
 
   const handleChange = (field: keyof FormState, value: string) => {
@@ -88,6 +96,26 @@ export default function CheckoutPage() {
       setEnvioInfo(null);
     } finally {
       setEnvioLoading(false);
+    }
+  };
+
+  const handleAplicarCupon = async () => {
+    const codigo = cuponCodigo.trim().toUpperCase();
+    if (!codigo) return;
+    setCuponLoading(true);
+    setCuponError('');
+    setCuponInfo(null);
+    try {
+      const resultado = await validarCupon(codigo);
+      if (resultado.valido) {
+        setCuponInfo(resultado);
+      } else {
+        setCuponError(resultado.mensaje);
+      }
+    } catch {
+      setCuponError('No se pudo validar el cupón.');
+    } finally {
+      setCuponLoading(false);
     }
   };
 
@@ -148,7 +176,7 @@ export default function CheckoutPage() {
     setError('');
     setLoading(true);
 
-    const payload: OrdenRequest = {
+    const payload: OrdenRequest & { cuponCodigo?: string } = {
       nombreComprador: nombre,
       emailComprador: email,
       telefonoComprador: telefono || undefined,
@@ -158,6 +186,7 @@ export default function CheckoutPage() {
       codigoPostal: codigoPostal || undefined,
       ciudadEnvio: ciudad || undefined,
       provinciaEnvio: provincia || undefined,
+      cuponCodigo: cuponInfo?.valido ? cuponInfo.codigo : undefined,
       items: items.map((item) => ({
         productoId: item.productoId,
         varianteId: item.varianteId,
@@ -468,6 +497,61 @@ export default function CheckoutPage() {
                 ) : null}
               </Field>
 
+              <div style={{ display: 'grid', gap: '8px' }}>
+                <label style={{
+                  fontSize: '12px',
+                  fontWeight: 600,
+                  letterSpacing: '0.08em',
+                  textTransform: 'uppercase',
+                  color: 'var(--gray)',
+                }}>
+                  Cupón de descuento
+                </label>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <input
+                    type="text"
+                    value={cuponCodigo}
+                    onChange={(e) => {
+                      setCuponCodigo(e.target.value.toUpperCase());
+                      setCuponError('');
+                      if (cuponInfo) setCuponInfo(null);
+                    }}
+                    disabled={loading || cuponLoading}
+                    style={{ ...inputStyle, flex: 1 }}
+                    placeholder="Ej. VERANO20"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleAplicarCupon}
+                    disabled={!cuponCodigo.trim() || cuponLoading || loading}
+                    style={{
+                      height: '46px',
+                      padding: '0 16px',
+                      border: 'none',
+                      background: !cuponCodigo.trim() ? '#cccccc' : 'var(--accent)',
+                      color: '#ffffff',
+                      fontSize: '12px',
+                      fontWeight: 600,
+                      cursor: !cuponCodigo.trim() || cuponLoading ? 'not-allowed' : 'pointer',
+                      fontFamily: 'var(--font-dm-sans)',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    {cuponLoading ? '...' : 'Aplicar'}
+                  </button>
+                </div>
+                {cuponInfo?.valido && (
+                  <p style={{ margin: 0, fontSize: '12px', color: '#027a48' }}>
+                    {cuponInfo.mensaje}
+                  </p>
+                )}
+                {cuponError && (
+                  <p style={{ margin: 0, fontSize: '12px', color: '#b42318' }}>
+                    {cuponError}
+                  </p>
+                )}
+              </div>
+
               {error ? <p style={errorTextStyle}>{error}</p> : null}
 
               <button
@@ -618,6 +702,21 @@ export default function CheckoutPage() {
                     {formatPrice(subtotal)}
                   </span>
                 </div>
+
+                {descuento > 0 && (
+                  <div style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    gap: '16px',
+                    fontSize: '13px',
+                    color: 'var(--gray)',
+                  }}>
+                    <span>Descuento ({cuponInfo?.porcentaje}%)</span>
+                    <span style={{ color: '#027a48', fontWeight: 600 }}>
+                      -{formatPrice(descuento)}
+                    </span>
+                  </div>
+                )}
 
                 <div style={{
                   display: 'flex',

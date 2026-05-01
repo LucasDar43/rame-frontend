@@ -11,6 +11,7 @@ const EMPTY_FORM = {
   nombre: '',
   descripcion: '',
   precio: '',
+  precioOriginal: '',
   marca: '',
   categoria: CATEGORIAS[0],
   subcategoria: '',
@@ -87,6 +88,9 @@ export default function ProductoForm() {
       nombre: form.nombre.trim(),
       descripcion: form.descripcion.trim(),
       precio: precioNumerico,
+      precioOriginal: form.precioOriginal
+        ? Number(form.precioOriginal)
+        : undefined,
       marca: form.marca.trim(),
       categoria: form.categoria,
       subcategoria: form.subcategoria.trim() || undefined,
@@ -166,6 +170,21 @@ export default function ProductoForm() {
               disabled={loading}
               style={inputStyle}
               placeholder="0.00"
+            />
+          </Field>
+
+          <Field label="Precio original (opcional)">
+            <input
+              type="number"
+              name="precioOriginal"
+              value={form.precioOriginal}
+              onChange={handleChange}
+              min="0.01"
+              step="0.01"
+              inputMode="decimal"
+              disabled={loading}
+              style={inputStyle}
+              placeholder="Precio antes del descuento"
             />
           </Field>
 

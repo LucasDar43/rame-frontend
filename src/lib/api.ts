@@ -8,6 +8,9 @@ import {
   OrdenResumen,
   ImportacionResultado,
   EnvioResponse,
+  CuponResponse,
+  CuponRequest,
+  CuponValido,
 } from '@/types';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8080/api';
@@ -336,4 +339,36 @@ export async function eliminarImagenGaleria(
     const error = await res.json().catch(() => ({}));
     throw new Error(error.mensaje || `Error ${res.status}`);
   }
+}
+
+export async function getCupones(): Promise<CuponResponse[]> {
+  return fetchApi('/cupones', { headers: authHeaders() });
+}
+
+export async function crearCupon(data: CuponRequest): Promise<CuponResponse> {
+  return fetchApi('/cupones', {
+    method: 'POST',
+    headers: authHeaders(),
+    body: JSON.stringify(data),
+  });
+}
+
+export async function toggleCupon(id: number): Promise<CuponResponse> {
+  return fetchApi(`/cupones/${id}/toggle`, {
+    method: 'PATCH',
+    headers: authHeaders(),
+  });
+}
+
+export async function eliminarCupon(id: number): Promise<void> {
+  return fetchApi(`/cupones/${id}`, {
+    method: 'DELETE',
+    headers: authHeaders(),
+  });
+}
+
+export async function validarCupon(codigo: string): Promise<CuponValido> {
+  return fetchApi(
+    `/cupones/validar?codigo=${encodeURIComponent(codigo)}`
+  );
 }

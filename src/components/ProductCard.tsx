@@ -97,16 +97,25 @@ export default function ProductCard({ producto }: ProductCardProps) {
               gap: '12px',
             }}
           >
-            <span
-              style={{
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+              {producto.precioOriginal && producto.precioOriginal > producto.precio && (
+                <span style={{
+                  fontSize: '13px',
+                  color: 'var(--gray)',
+                  textDecoration: 'line-through',
+                }}>
+                  ${producto.precioOriginal.toLocaleString('es-AR')}
+                </span>
+              )}
+              <span style={{
                 fontFamily: 'var(--font-playfair)',
                 fontWeight: 700,
                 fontSize: '19px',
                 color: 'var(--white)',
-              }}
-            >
-              ${producto.precio.toLocaleString('es-AR')}
-            </span>
+              }}>
+                ${producto.precio.toLocaleString('es-AR')}
+              </span>
+            </div>
 
             <span
               style={{
