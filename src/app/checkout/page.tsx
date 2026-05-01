@@ -22,7 +22,10 @@ const EMPTY_FORM = {
 };
 
 type FormState = typeof EMPTY_FORM;
-type FieldErrors = Partial<Record<'nombre' | 'email' | 'codigoPostal', string>>;
+type FieldErrors = Partial<Record<
+  'nombre' | 'email' | 'telefono' | 'calle' | 'numero' | 'codigoPostal' | 'ciudad' | 'provincia',
+  string
+>>;
 
 function formatPrice(value: number) {
   return `$${value.toLocaleString('es-AR')}`;
@@ -46,6 +49,15 @@ export default function CheckoutPage() {
     }
   }, [items.length, router]);
 
+  useEffect(() => {
+    if (form.codigoPostal.length >= 4) {
+      calcularCostoEnvio(form.codigoPostal);
+    } else {
+      setEnvioInfo(null);
+      setCodigoPostalConsultado('');
+    }
+  }, [form.codigoPostal]);
+
   const subtotal = items.reduce(
     (accumulator, item) => accumulator + item.precio * item.cantidad,
     0
@@ -56,23 +68,12 @@ export default function CheckoutPage() {
 
   const handleChange = (field: keyof FormState, value: string) => {
     setForm((current) => ({ ...current, [field]: value }));
-
-    if (field === 'codigoPostal') {
-      setEnvioInfo(null);
-      setCodigoPostalConsultado('');
-    }
-
-    if (field === 'nombre' || field === 'email' || field === 'codigoPostal') {
-      setFieldErrors((current) => {
-        if (!current[field]) {
-          return current;
-        }
-
-        const nextErrors = { ...current };
-        delete nextErrors[field];
-        return nextErrors;
-      });
-    }
+    setFieldErrors((current) => {
+      if (!current[field as keyof FieldErrors]) return current;
+      const next = { ...current };
+      delete next[field as keyof FieldErrors];
+      return next;
+    });
   };
 
   const calcularCostoEnvio = async (cp: string) => {
@@ -99,15 +100,42 @@ export default function CheckoutPage() {
 
     const nombre = form.nombre.trim();
     const email = form.email.trim();
+    const telefono = form.telefono.trim();
+    const calle = form.calle.trim();
+    const numero = form.numero.trim();
+    const ciudad = form.ciudad.trim();
+    const provincia = form.provincia.trim();
+    const codigoPostal = form.codigoPostal.trim();
 
     const nextFieldErrors: FieldErrors = {};
 
     if (!nombre) {
       nextFieldErrors.nombre = 'El nombre es obligatorio.';
     }
-
     if (!email) {
       nextFieldErrors.email = 'El email es obligatorio.';
+    }
+    if (!telefono) {
+      nextFieldErrors.telefono = 'El teléfono es obligatorio.';
+    }
+    if (!calle) {
+      nextFieldErrors.calle = 'La calle es obligatoria.';
+    }
+    if (!numero) {
+      nextFieldErrors.numero = 'El número es obligatorio.';
+    }
+    if (!codigoPostal) {
+      nextFieldErrors.codigoPostal = 'El código postal es obligatorio.';
+    } else if (codigoPostal.length < 4) {
+      nextFieldErrors.codigoPostal = 'El código postal no es válido.';
+    } else if (!envioInfo) {
+      nextFieldErrors.codigoPostal = 'Esperá mientras se calcula el envío.';
+    }
+    if (!ciudad) {
+      nextFieldErrors.ciudad = 'La ciudad es obligatoria.';
+    }
+    if (!provincia) {
+      nextFieldErrors.provincia = 'La provincia es obligatoria.';
     }
 
     if (Object.keys(nextFieldErrors).length > 0) {
@@ -123,13 +151,13 @@ export default function CheckoutPage() {
     const payload: OrdenRequest = {
       nombreComprador: nombre,
       emailComprador: email,
-      telefonoComprador: form.telefono.trim() || undefined,
-      direccionEnvio: form.calle.trim() || undefined,
-      numeroDireccion: form.numero.trim() || undefined,
+      telefonoComprador: telefono || undefined,
+      direccionEnvio: calle || undefined,
+      numeroDireccion: numero || undefined,
       pisoDpto: form.pisoDpto.trim() || undefined,
-      codigoPostal: form.codigoPostal.trim() || undefined,
-      ciudadEnvio: form.ciudad.trim() || undefined,
-      provinciaEnvio: form.provincia.trim() || undefined,
+      codigoPostal: codigoPostal || undefined,
+      ciudadEnvio: ciudad || undefined,
+      provinciaEnvio: provincia || undefined,
       items: items.map((item) => ({
         productoId: item.productoId,
         varianteId: item.varianteId,
@@ -302,7 +330,7 @@ export default function CheckoutPage() {
                 ) : null}
               </Field>
 
-              <Field label="Telefono">
+              <Field label="Telefono" required={true}>
                 <input
                   type="tel"
                   value={form.telefono}
@@ -312,9 +340,12 @@ export default function CheckoutPage() {
                   placeholder="Opcional"
                   autoComplete="tel"
                 />
+                {fieldErrors.telefono ? (
+                  <span style={errorTextStyle}>{fieldErrors.telefono}</span>
+                ) : null}
               </Field>
 
-              <Field label="Calle">
+              <Field label="Calle" required={true}>
                 <input
                   type="text"
                   value={form.calle}
@@ -324,10 +355,13 @@ export default function CheckoutPage() {
                   placeholder="Nombre de la calle"
                   autoComplete="address-line1"
                 />
+                {fieldErrors.calle ? (
+                  <span style={errorTextStyle}>{fieldErrors.calle}</span>
+                ) : null}
               </Field>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                <Field label="Numero">
+                <Field label="Numero" required={true}>
                   <input
                     type="text"
                     value={form.numero}
@@ -336,6 +370,9 @@ export default function CheckoutPage() {
                     style={inputStyle}
                     placeholder="1234"
                   />
+                  {fieldErrors.numero ? (
+                    <span style={errorTextStyle}>{fieldErrors.numero}</span>
+                  ) : null}
                 </Field>
 
                 <Field label="Piso / Depto">
@@ -350,7 +387,7 @@ export default function CheckoutPage() {
                 </Field>
               </div>
 
-              <Field label="Codigo postal">
+              <Field label="Codigo postal" required={true}>
                 <div style={{ display: 'flex', gap: '8px' }}>
                   <input
                     type="text"
@@ -385,6 +422,9 @@ export default function CheckoutPage() {
                     {envioLoading ? '...' : 'Calcular'}
                   </button>
                 </div>
+                {fieldErrors.codigoPostal ? (
+                  <span style={errorTextStyle}>{fieldErrors.codigoPostal}</span>
+                ) : null}
                 {envioInfo && !envioLoading && (
                   <p style={{
                     margin: '6px 0 0',
@@ -398,7 +438,7 @@ export default function CheckoutPage() {
                 )}
               </Field>
 
-              <Field label="Ciudad">
+              <Field label="Ciudad" required={true}>
                 <input
                   type="text"
                   value={form.ciudad}
@@ -408,9 +448,12 @@ export default function CheckoutPage() {
                   placeholder="Ej. Vera"
                   autoComplete="address-level2"
                 />
+                {fieldErrors.ciudad ? (
+                  <span style={errorTextStyle}>{fieldErrors.ciudad}</span>
+                ) : null}
               </Field>
 
-              <Field label="Provincia">
+              <Field label="Provincia" required={true}>
                 <input
                   type="text"
                   value={form.provincia}
@@ -420,6 +463,9 @@ export default function CheckoutPage() {
                   placeholder="Ej. Santa Fe"
                   autoComplete="address-level1"
                 />
+                {fieldErrors.provincia ? (
+                  <span style={errorTextStyle}>{fieldErrors.provincia}</span>
+                ) : null}
               </Field>
 
               {error ? <p style={errorTextStyle}>{error}</p> : null}
