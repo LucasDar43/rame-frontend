@@ -29,11 +29,14 @@ export default function ProductoDetalle({ producto, variantes }: Props) {
     (v) => v.talle === talleSeleccionado && v.color === colorSeleccionado
   );
 
-  const imagenes = producto.imagenes?.length
-    ? producto.imagenes.map((i) => i.url)
-    : producto.imagenUrl
+  const imagenesGaleria = producto.imagenes?.map((i) => i.url) ?? [];
+  const imagenPrincipal = producto.imagenUrl
     ? [producto.imagenUrl]
     : [];
+  const imagenes = [
+    ...imagenPrincipal,
+    ...imagenesGaleria.filter((url) => url !== producto.imagenUrl),
+  ];
 
   useEffect(() => {
     return () => {

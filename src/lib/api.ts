@@ -278,3 +278,62 @@ export async function calcularEnvio(
     `/envio/calcular?codigoPostal=${encodeURIComponent(codigoPostal)}&subtotal=${subtotal}`
   );
 }
+
+export async function agregarImagenGaleria(
+  productoId: number,
+  imagen: File
+): Promise<Producto> {
+  const formData = new FormData();
+  formData.append('imagen', imagen);
+
+  const res = await fetch(`${BASE_URL}/productos/${productoId}/galeria`, {
+    method: 'POST',
+    headers: authHeaders(),
+    body: formData,
+  });
+
+  if (res.status === 401 || res.status === 403) {
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('token');
+      localStorage.removeItem('email');
+      localStorage.removeItem('rol');
+      window.location.href = '/admin/login';
+    }
+    throw new Error('Sesión expirada');
+  }
+
+  if (!res.ok) {
+    const error = await res.json().catch(() => ({}));
+    throw new Error(error.mensaje || `Error ${res.status}`);
+  }
+
+  return res.json();
+}
+
+export async function eliminarImagenGaleria(
+  productoId: number,
+  imagenId: number
+): Promise<void> {
+  const res = await fetch(
+    `${BASE_URL}/productos/${productoId}/galeria/${imagenId}`,
+    {
+      method: 'DELETE',
+      headers: authHeaders(),
+    }
+  );
+
+  if (res.status === 401 || res.status === 403) {
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('token');
+      localStorage.removeItem('email');
+      localStorage.removeItem('rol');
+      window.location.href = '/admin/login';
+    }
+    throw new Error('Sesión expirada');
+  }
+
+  if (!res.ok && res.status !== 204) {
+    const error = await res.json().catch(() => ({}));
+    throw new Error(error.mensaje || `Error ${res.status}`);
+  }
+}
