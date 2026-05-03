@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import Link from 'next/link';
 import { Producto, Variante } from '@/types';
 import useCart from '@/hooks/useCart';
 import { calcularEnvio } from '@/lib/api';
@@ -122,7 +123,12 @@ export default function ProductoDetalle({ producto, variantes }: Props) {
       }}>
         <a href="/" style={{ color: 'var(--gray)', textDecoration: 'none' }}>Inicio</a>
         <span>/</span>
-        <a href="#" style={{ color: 'var(--gray)', textDecoration: 'none' }}>{producto.categoria}</a>
+        <Link
+          href={`/productos?categoria=${encodeURIComponent(producto.categoria)}`}
+          style={{ color: 'var(--gray)', textDecoration: 'none' }}
+        >
+          {producto.categoria}
+        </Link>
         <span>/</span>
         <span style={{ color: 'var(--white)' }}>{producto.nombre}</span>
       </div>
