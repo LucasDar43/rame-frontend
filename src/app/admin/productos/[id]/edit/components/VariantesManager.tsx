@@ -8,6 +8,7 @@ type VariantesManagerProps = {
   productoId: number;
   producto: Producto;
   variantesIniciales: Variante[];
+  onVariantesChange?: () => void;
 };
 
 type VarianteFormState = {
@@ -70,6 +71,7 @@ export default function VariantesManager({
   productoId,
   producto,
   variantesIniciales,
+  onVariantesChange,
 }: VariantesManagerProps) {
   const [variantes, setVariantes] = useState<Variante[]>(variantesIniciales);
   const [editingId, setEditingId] = useState<number | null>(null);
@@ -98,6 +100,7 @@ export default function VariantesManager({
       });
 
       setVariantes((prev) => [...prev, created]);
+      onVariantesChange?.();
       setNewRow(emptyForm);
       setError('');
     } catch (err) {
@@ -150,6 +153,7 @@ export default function VariantesManager({
     try {
       await eliminarVariante(productoId, varianteId);
       setVariantes((prev) => prev.filter((variante) => variante.id !== varianteId));
+      onVariantesChange?.();
 
       if (editingId === varianteId) {
         setEditingId(null);

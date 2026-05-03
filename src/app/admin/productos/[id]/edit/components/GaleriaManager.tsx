@@ -1,24 +1,57 @@
 'use client';
 
-import { ChangeEvent, useState } from 'react';
-import { agregarImagenGaleria, eliminarImagenGaleria } from '@/lib/api';
+import { ChangeEvent, useEffect, useState } from 'react';
+import { agregarImagenGaleria, eliminarImagenGaleria, getVariantes } from '@/lib/api';
 import { ImagenProducto, Producto } from '@/types';
 
 type GaleriaManagerProps = {
   producto: Producto;
   onActualizado: (producto: Producto) => void;
+  variantesKey: number;
+};
+
+type ImagenProductoConColor = ImagenProducto & {
+  color?: string;
 };
 
 export default function GaleriaManager({
   producto,
   onActualizado,
+  variantesKey,
 }: GaleriaManagerProps) {
   const [imagen, setImagen] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState('');
+  const [coloresDisponibles, setColoresDisponibles] = useState<string[]>([]);
+  const [colorSeleccionado, setColorSeleccionado] = useState<string>('');
   const [loading, setLoading] = useState(false);
+  const [loadingVariantes, setLoadingVariantes] = useState(false);
   const [deletingId, setDeletingId] = useState<number | null>(null);
   const [error, setError] = useState('');
   const [exito, setExito] = useState(false);
+  const tieneVariantes = coloresDisponibles.length > 0;
+
+  useEffect(() => {
+    const cargarVariantes = async () => {
+      setLoadingVariantes(true);
+      try {
+        const variantes = await getVariantes(producto.id);
+        const colores = Array.from(
+          new Set(
+            variantes
+              .filter((v) => v.activo && v.color)
+              .map((v) => v.color)
+          )
+        );
+        setColoresDisponibles(colores);
+      } catch {
+        setColoresDisponibles([]);
+      } finally {
+        setLoadingVariantes(false);
+      }
+    };
+
+    cargarVariantes();
+  }, [producto.id, variantesKey]);
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0] ?? null;
@@ -40,10 +73,15 @@ export default function GaleriaManager({
     setLoading(true);
     setError('');
     try {
-      const actualizado = await agregarImagenGaleria(producto.id, imagen);
+      const actualizado = await agregarImagenGaleria(
+        producto.id,
+        imagen,
+        colorSeleccionado || undefined
+      );
       onActualizado(actualizado);
       setImagen(null);
       setPreviewUrl('');
+      setColorSeleccionado('');
       setExito(true);
       setTimeout(() => setExito(false), 3000);
     } catch (err) {
@@ -96,7 +134,7 @@ export default function GaleriaManager({
           </p>
         )}
 
-        {producto.imagenes.map((img: ImagenProducto) => (
+        {(producto.imagenes as ImagenProductoConColor[]).map((img) => (
           <div key={img.id} style={{ position: 'relative' }}>
             <img
               src={img.url}
@@ -145,6 +183,24 @@ export default function GaleriaManager({
               marginTop: '4px',
             }}>
               #{img.orden}
+              {img.color && (
+                <div>
+                  <span style={{
+                    display: 'inline-block',
+                    padding: '2px 8px',
+                    fontSize: '10px',
+                    fontWeight: 600,
+                    letterSpacing: '1px',
+                    textTransform: 'uppercase',
+                    background: 'var(--card)',
+                    border: '1px solid var(--border)',
+                    color: 'var(--gray)',
+                    marginTop: '2px',
+                  }}>
+                    {img.color}
+                  </span>
+                </div>
+              )}
             </div>
           </div>
         ))}
@@ -175,6 +231,43 @@ export default function GaleriaManager({
               disabled={loading}
               style={{ fontSize: '13px', color: 'var(--black)' }}
             />
+
+            {tieneVariantes && (
+              <label style={{
+                fontSize: '12px',
+                fontWeight: 600,
+                letterSpacing: '0.08em',
+                textTransform: 'uppercase',
+                color: 'var(--gray)',
+              }}>
+                Color (opcional)
+                <select
+                  value={colorSeleccionado}
+                  onChange={(event) => setColorSeleccionado(event.target.value)}
+                  disabled={loading || loadingVariantes}
+                  style={{
+                    width: '100%',
+                    minHeight: '40px',
+                    padding: '8px 12px',
+                    border: '1px solid var(--border2)',
+                    background: '#ffffff',
+                    color: 'var(--black)',
+                    fontSize: '13px',
+                    fontFamily: 'var(--font-dm-sans)',
+                    outline: 'none',
+                    marginTop: '8px',
+                    cursor: 'pointer',
+                  }}
+                >
+                  <option value="">Sin tag (imagen general)</option>
+                  {coloresDisponibles.map((color) => (
+                    <option key={color} value={color}>
+                      {color}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            )}
 
             {previewUrl && (
               <img

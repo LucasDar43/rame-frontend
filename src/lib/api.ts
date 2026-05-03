@@ -284,10 +284,12 @@ export async function calcularEnvio(
 
 export async function agregarImagenGaleria(
   productoId: number,
-  imagen: File
+  imagen: File,
+  color?: string
 ): Promise<Producto> {
   const formData = new FormData();
   formData.append('imagen', imagen);
+  if (color) formData.append('color', color);
 
   const res = await fetch(`${BASE_URL}/productos/${productoId}/galeria`, {
     method: 'POST',

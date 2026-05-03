@@ -16,6 +16,7 @@ export default function EditProductoPage() {
 
   const [producto, setProducto] = useState<Producto | null>(null);
   const [variantes, setVariantes] = useState<Variante[]>([]);
+  const [variantesKey, setVariantesKey] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -62,6 +63,8 @@ export default function EditProductoPage() {
   const handleImagenActualizada = (productoActualizado: Producto) => {
     setProducto(productoActualizado);
   };
+
+  const handleVariantesChange = () => setVariantesKey(prev => prev + 1);
 
   return (
     <main
@@ -191,6 +194,7 @@ export default function EditProductoPage() {
               <GaleriaManager
                 producto={producto}
                 onActualizado={handleImagenActualizada}
+                variantesKey={variantesKey}
               />
             </section>
 
@@ -205,6 +209,7 @@ export default function EditProductoPage() {
                 productoId={productoId}
                 producto={producto}
                 variantesIniciales={variantes}
+                onVariantesChange={handleVariantesChange}
               />
             </section>
           </>

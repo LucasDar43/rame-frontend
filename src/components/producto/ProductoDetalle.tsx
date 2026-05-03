@@ -29,14 +29,29 @@ export default function ProductoDetalle({ producto, variantes }: Props) {
     (v) => v.talle === talleSeleccionado && v.color === colorSeleccionado
   );
 
-  const imagenesGaleria = producto.imagenes?.map((i) => i.url) ?? [];
-  const imagenPrincipal = producto.imagenUrl
-    ? [producto.imagenUrl]
-    : [];
-  const imagenes = [
-    ...imagenPrincipal,
-    ...imagenesGaleria.filter((url) => url !== producto.imagenUrl),
+  type ImagenItem = { url: string; color?: string };
+
+  const imagenesCombinadas: ImagenItem[] = [
+    ...(producto.imagenUrl ? [{ url: producto.imagenUrl, color: undefined }] : []),
+    ...(producto.imagenes ?? [])
+      .filter((img) => img.url !== producto.imagenUrl)
+      .map((img) => ({
+        url: img.url,
+        color: 'color' in img && typeof img.color === 'string' ? img.color : undefined,
+      })),
   ];
+
+  useEffect(() => {
+    if (!colorSeleccionado) return;
+
+    const indexConColor = imagenesCombinadas.findIndex(
+      (img) => img.color?.toLowerCase() === colorSeleccionado.toLowerCase()
+    );
+
+    if (indexConColor !== -1) {
+      setImagenActiva(indexConColor);
+    }
+  }, [colorSeleccionado]);
 
   useEffect(() => {
     return () => {
@@ -122,18 +137,18 @@ export default function ProductoDetalle({ producto, variantes }: Props) {
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             marginBottom: '8px', overflow: 'hidden',
           }}>
-            {imagenes.length > 0 ? (
+            {imagenesCombinadas.length > 0 ? (
               <>
                 <img
-                  src={imagenes[imagenActiva]}
+                  src={imagenesCombinadas[imagenActiva].url}
                   alt={producto.nombre}
                   style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                 />
                 {/* Flechas de navegación */}
-                {imagenes.length > 1 && (
+                {imagenesCombinadas.length > 1 && (
                   <>
                     <button
-                      onClick={() => setImagenActiva((prev) => (prev === 0 ? imagenes.length - 1 : prev - 1))}
+                      onClick={() => setImagenActiva((prev) => (prev === 0 ? imagenesCombinadas.length - 1 : prev - 1))}
                       style={{
                         position: 'absolute', left: '16px', top: '50%',
                         transform: 'translateY(-50%)',
@@ -149,7 +164,7 @@ export default function ProductoDetalle({ producto, variantes }: Props) {
                       </svg>
                     </button>
                     <button
-                      onClick={() => setImagenActiva((prev) => (prev === imagenes.length - 1 ? 0 : prev + 1))}
+                      onClick={() => setImagenActiva((prev) => (prev === imagenesCombinadas.length - 1 ? 0 : prev + 1))}
                       style={{
                         position: 'absolute', right: '16px', top: '50%',
                         transform: 'translateY(-50%)',
@@ -189,22 +204,22 @@ export default function ProductoDetalle({ producto, variantes }: Props) {
             </div>
 
             {/* Contador de imagen */}
-            {imagenes.length > 1 && (
+            {imagenesCombinadas.length > 1 && (
               <div style={{
                 position: 'absolute', bottom: '16px', right: '16px',
                 fontSize: '10px', letterSpacing: '1px', color: 'var(--gray)',
                 background: 'rgba(255,255,255,0.9)', padding: '4px 10px',
                 border: '1px solid var(--border)',
               }}>
-                {imagenActiva + 1} / {imagenes.length}
+                {imagenActiva + 1} / {imagenesCombinadas.length}
               </div>
             )}
           </div>
 
           {/* Miniaturas */}
-          {imagenes.length > 1 && (
+          {imagenesCombinadas.length > 1 && (
             <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-              {imagenes.map((url, i) => (
+              {imagenesCombinadas.map((img, i) => (
                 <div
                   key={i}
                   onClick={() => setImagenActiva(i)}
@@ -213,11 +228,13 @@ export default function ProductoDetalle({ producto, variantes }: Props) {
                     cursor: 'pointer', overflow: 'hidden', flexShrink: 0,
                     border: imagenActiva === i
                       ? '2px solid #111111'
+                      : img.color
+                      ? '2px solid var(--border2)'
                       : '2px solid transparent',
                     transition: 'border-color 0.15s',
                   }}
                 >
-                  <img src={url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }}/>
+                  <img src={img.url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }}/>
                 </div>
               ))}
             </div>
