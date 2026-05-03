@@ -4,7 +4,7 @@ import { Suspense, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 import ProductCard from '@/components/ProductCard';
-import { buscarProductosFiltrado, getFiltrosDisponibles } from '@/lib/api';
+import { buscarProductosFiltrado, getFiltrosDisponibles, getSubcategorias } from '@/lib/api';
 import { Producto } from '@/types';
 
 const categorias = ['Todas', 'Mujer', 'Hombre', 'Liquidacion', 'Novedades'];
@@ -22,9 +22,11 @@ function ProductosContent() {
     colores: string[];
     talles: string[];
   }>({ marcas: [], colores: [], talles: [] });
+  const [subcategorias, setSubcategorias] = useState<string[]>([]);
 
   const q = searchParams.get('q') ?? '';
   const categoriaActiva = searchParams.get('categoria') ?? 'Todas';
+  const subcategoria = searchParams.get('subcategoria') ?? '';
   const marca = searchParams.get('marca') ?? '';
   const color = searchParams.get('color') ?? '';
   const talle = searchParams.get('talle') ?? '';
@@ -54,6 +56,7 @@ function ProductosContent() {
         const res = await buscarProductosFiltrado({
           q: q || undefined,
           categoria: categoriaActiva !== 'Todas' ? categoriaActiva : undefined,
+          subcategoria: subcategoria || undefined,
           marca: marca || undefined,
           color: color || undefined,
           talle: talle || undefined,
@@ -82,7 +85,7 @@ function ProductosContent() {
     return () => {
       active = false;
     };
-  }, [page, categoriaActiva, marca, color, talle, ordenar, q]);
+  }, [page, categoriaActiva, marca, color, talle, ordenar, q, subcategoria]);
 
   useEffect(() => {
     getFiltrosDisponibles()
@@ -90,12 +93,19 @@ function ProductosContent() {
       .catch(() => {});
   }, []);
 
+  useEffect(() => {
+    setSubcategorias([]);
+    getSubcategorias(categoriaActiva !== 'Todas' ? categoriaActiva : undefined)
+      .then(setSubcategorias)
+      .catch(() => setSubcategorias([]));
+  }, [categoriaActiva]);
+
   function resetFiltros() {
     router.replace('/productos', { scroll: false });
   }
 
   function handleCategoriaChange(categoria: string) {
-    setFiltros({ categoria, marca: '', color: '', talle: '', page: '0' });
+    setFiltros({ categoria, marca: '', color: '', talle: '', subcategoria: '', page: '0' });
   }
 
   return (
@@ -179,6 +189,49 @@ function ProductosContent() {
             overflowY: 'auto',
           }}
         >
+          {subcategorias.length > 0 && (
+            <div style={{ marginBottom: '32px' }}>
+              <p
+                style={{
+                  margin: '0 0 12px',
+                  fontSize: '11px',
+                  fontWeight: 600,
+                  letterSpacing: '2px',
+                  textTransform: 'uppercase',
+                  color: 'var(--gray)',
+                }}
+              >
+                Tipo de prenda
+              </p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                {subcategorias.map((sub) => (
+                  <label
+                    key={sub}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '10px',
+                      cursor: 'pointer',
+                      fontSize: '13px',
+                      color: subcategoria === sub ? 'var(--black)' : 'var(--light)',
+                      fontWeight: subcategoria === sub ? 500 : 400,
+                    }}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={subcategoria === sub}
+                      onChange={() => {
+                        setFiltros({ subcategoria: subcategoria === sub ? '' : sub, page: '0' });
+                      }}
+                      style={{ cursor: 'pointer', accentColor: '#111111' }}
+                    />
+                    {sub}
+                  </label>
+                ))}
+              </div>
+            </div>
+          )}
+
           <div style={{ marginBottom: '32px' }}>
             <p
               style={{
@@ -342,7 +395,7 @@ function ProductosContent() {
             </div>
           )}
 
-          {(marca || color || talle || ordenar || categoriaActiva !== 'Todas') && (
+          {(marca || color || talle || ordenar || subcategoria || categoriaActiva !== 'Todas') && (
             <button
               type="button"
               onClick={resetFiltros}

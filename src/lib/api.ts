@@ -238,6 +238,7 @@ export async function buscarProductosFiltrado(
   params: {
     q?: string;
     categoria?: string;
+    subcategoria?: string;
     marca?: string;
     color?: string;
     talle?: string;
@@ -251,11 +252,20 @@ export async function buscarProductosFiltrado(
   queryParams.append('size', String(params.size ?? 20));
   if (params.q && params.q.trim()) queryParams.append('q', params.q.trim());
   if (params.categoria && params.categoria !== 'Todas') queryParams.append('categoria', params.categoria);
+  if (params.subcategoria) queryParams.append('subcategoria', params.subcategoria);
   if (params.marca) queryParams.append('marca', params.marca);
   if (params.color) queryParams.append('color', params.color);
   if (params.talle) queryParams.append('talle', params.talle);
   if (params.ordenar) queryParams.append('ordenar', params.ordenar);
   return fetchApi(`/productos/buscar-filtrado?${queryParams.toString()}`);
+}
+
+export async function getSubcategorias(categoria?: string): Promise<string[]> {
+  const params = new URLSearchParams();
+  if (categoria && categoria !== 'Todas') {
+    params.append('categoria', categoria);
+  }
+  return fetchApi(`/productos/subcategorias?${params.toString()}`);
 }
 
 export async function getFiltrosDisponibles(): Promise<{
