@@ -129,9 +129,6 @@ function ProductosContent() {
         >
           Catalogo <em style={{ fontStyle: 'italic', opacity: 0.5 }}>de productos</em>
         </h1>
-        <p style={{ margin: '8px 0 0', fontSize: '13px', color: 'var(--gray)' }}>
-          {loading ? 'Cargando...' : `${totalElements} productos encontrados`}
-        </p>
       </section>
 
       <section
@@ -231,44 +228,6 @@ function ProductosContent() {
               </div>
             </div>
           )}
-
-          <div style={{ marginBottom: '32px' }}>
-            <p
-              style={{
-                margin: '0 0 12px',
-                fontSize: '11px',
-                fontWeight: 600,
-                letterSpacing: '2px',
-                textTransform: 'uppercase',
-                color: 'var(--gray)',
-              }}
-            >
-              Ordenar por
-            </p>
-            <select
-              value={ordenar}
-              onChange={(e) => {
-                setFiltros({ ordenar: e.target.value, page: '0' });
-              }}
-              style={{
-                width: '100%',
-                padding: '10px 12px',
-                border: '1px solid var(--border2)',
-                background: '#ffffff',
-                color: 'var(--black)',
-                fontSize: '13px',
-                fontFamily: 'var(--font-dm-sans)',
-                outline: 'none',
-                cursor: 'pointer',
-              }}
-            >
-              <option value="">Relevancia</option>
-              <option value="precio-asc">Precio: menor a mayor</option>
-              <option value="precio-desc">Precio: mayor a menor</option>
-              <option value="nombre-asc">Nombre: A - Z</option>
-              <option value="nombre-desc">Nombre: Z - A</option>
-            </select>
-          </div>
 
           {filtrosDisponibles.marcas.length > 0 && (
             <div style={{ marginBottom: '32px' }}>
@@ -419,6 +378,68 @@ function ProductosContent() {
         </aside>
 
         <div style={{ flex: 1, minWidth: 0, padding: '32px 0 32px 32px' }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              marginBottom: '24px',
+              paddingBottom: '16px',
+              borderBottom: '1px solid var(--border)',
+            }}
+          >
+            <p
+              style={{
+                margin: 0,
+                fontSize: '13px',
+                color: 'var(--gray)',
+              }}
+            >
+              {loading ? 'Cargando...' : `${totalElements} productos encontrados`}
+            </p>
+
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+              }}
+            >
+              <span
+                style={{
+                  fontSize: '11px',
+                  fontWeight: 600,
+                  letterSpacing: '2px',
+                  textTransform: 'uppercase',
+                  color: 'var(--gray)',
+                }}
+              >
+                Ordenar por
+              </span>
+              <select
+                value={ordenar}
+                onChange={(e) => setFiltros({ ordenar: e.target.value, page: '0' })}
+                style={{
+                  padding: '8px 12px',
+                  border: '1px solid var(--border2)',
+                  background: '#ffffff',
+                  color: 'var(--black)',
+                  fontSize: '13px',
+                  fontFamily: 'var(--font-dm-sans)',
+                  outline: 'none',
+                  cursor: 'pointer',
+                  minWidth: '200px',
+                }}
+              >
+                <option value="">Relevancia</option>
+                <option value="precio-asc">Precio: menor a mayor</option>
+                <option value="precio-desc">Precio: mayor a menor</option>
+                <option value="nombre-asc">Nombre: A - Z</option>
+                <option value="nombre-desc">Nombre: Z - A</option>
+              </select>
+            </div>
+          </div>
+
           {loading ? (
             <div
               style={{
