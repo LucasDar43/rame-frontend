@@ -60,6 +60,24 @@ export async function getProductos(page = 0, size = 12): Promise<Page<Producto>>
   return fetchApi(`/productos?page=${page}&size=${size}`);
 }
 
+export async function getProductosAdmin(
+  page = 0,
+  size = 20,
+  activo?: boolean,
+  q?: string,
+  categoria?: string,
+): Promise<Page<Producto>> {
+  const params = new URLSearchParams()
+  params.append('page', String(page))
+  params.append('size', String(size))
+  if (activo !== undefined) params.append('activo', String(activo))
+  if (q) params.append('q', q)
+  if (categoria) params.append('categoria', categoria)
+  return fetchApi(`/productos/todos-admin?${params.toString()}`, {
+    headers: authHeaders(),
+  })
+}
+
 export async function getProducto(id: number): Promise<Producto> {
   return fetchApi(`/productos/${id}`);
 }
@@ -133,6 +151,27 @@ export async function eliminarProducto(id: number): Promise<void> {
   });
 }
 
+export async function editarProductosMasivo(data: {
+  ids: number[];
+  categoria?: string;
+  marca?: string;
+  activo?: boolean;
+  porcentajeAumento?: number;
+}): Promise<void> {
+  const res = await fetch(`${BASE_URL}/productos/edicion-masiva`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      ...authHeaders(),
+    },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) {
+    const error = await res.json().catch(() => ({}));
+    throw new Error(error.mensaje || `Error ${res.status}`);
+  }
+}
+
 // VARIANTES
 
 export async function getVariantes(productoId: number): Promise<Variante[]> {
@@ -189,10 +228,25 @@ export async function getOrden(id: number): Promise<OrdenResponse> {
   });
 }
 
-export async function getOrdenes(page = 0, size = 10): Promise<Page<OrdenResumen>> {
-  return fetchApi(`/ordenes?page=${page}&size=${size}`, {
-    headers: authHeaders(),
-  });
+export async function getOrdenes(
+  page = 0,
+  size = 10,
+  filtros?: {
+    estado?: string;
+    busqueda?: string;
+    fechaDesde?: string;
+    fechaHasta?: string;
+  }
+): Promise<Page<OrdenResumen>> {
+  const params = new URLSearchParams();
+  params.append('page', String(page));
+  params.append('size', String(size));
+  if (filtros?.estado) params.append('estado', filtros.estado);
+  if (filtros?.busqueda) params.append('busqueda', filtros.busqueda);
+  if (filtros?.fechaDesde) params.append('fechaDesde', filtros.fechaDesde);
+  if (filtros?.fechaHasta) params.append('fechaHasta', filtros.fechaHasta);
+
+  return fetchApi(`/ordenes?${params.toString()}`, { headers: authHeaders() });
 }
 
 // AUTH

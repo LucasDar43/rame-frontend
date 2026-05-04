@@ -9,6 +9,7 @@ export interface Producto {
   subcategoria?: string;
   imagenUrl?: string;
   imagenes: ImagenProducto[];
+  tieneVariantes?: boolean;
   activo: boolean;
   fechaCreacion: string;
 }

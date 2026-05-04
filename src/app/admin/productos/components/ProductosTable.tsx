@@ -7,6 +7,9 @@ type ProductosTableProps = {
   productos: Producto[];
   onEliminar: (id: number) => void;
   deletingId: number | null;
+  seleccionados: number[];
+  onToggleSeleccion: (id: number) => void;
+  onToggleTodos: (ids: number[]) => void;
 };
 
 const PLACEHOLDER_IMAGE =
@@ -21,6 +24,9 @@ export default function ProductosTable({
   productos,
   onEliminar,
   deletingId,
+  seleccionados,
+  onToggleSeleccion,
+  onToggleTodos,
 }: ProductosTableProps) {
   const router = useRouter();
 
@@ -35,6 +41,17 @@ export default function ProductosTable({
       >
         <thead>
           <tr style={{ background: 'var(--card)' }}>
+            <th style={{ padding: '16px', width: '40px' }}>
+              <input
+                type="checkbox"
+                checked={
+                  productos.length > 0 &&
+                  productos.every((p) => seleccionados.includes(p.id))
+                }
+                onChange={() => onToggleTodos(productos.map((p) => p.id))}
+                style={{ cursor: 'pointer', accentColor: '#111111' }}
+              />
+            </th>
             {[
               'ID',
               'Imagen',
@@ -70,6 +87,19 @@ export default function ProductosTable({
 
             return (
               <tr key={producto.id}>
+                <td
+                  style={{
+                    padding: '16px',
+                    borderBottom: '1px solid var(--border)',
+                  }}
+                >
+                  <input
+                    type="checkbox"
+                    checked={seleccionados.includes(producto.id)}
+                    onChange={() => onToggleSeleccion(producto.id)}
+                    style={{ cursor: 'pointer', accentColor: '#111111' }}
+                  />
+                </td>
                 <td
                   style={{
                     padding: '16px',
@@ -113,6 +143,33 @@ export default function ProductosTable({
                   }}
                 >
                   {producto.nombre}
+                  {(!producto.imagenUrl &&
+                    (!producto.imagenes || producto.imagenes.length === 0)) ||
+                  !producto.tieneVariantes ? (
+                    <span
+                      title="Producto incompleto: falta imagen o variantes"
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        marginLeft: '8px',
+                        color: '#d97706',
+                        verticalAlign: 'middle',
+                      }}
+                    >
+                      <svg
+                        width="14"
+                        height="14"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                      >
+                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                        <line x1="12" y1="9" x2="12" y2="13" />
+                        <line x1="12" y1="17" x2="12.01" y2="17" />
+                      </svg>
+                    </span>
+                  ) : null}
                 </td>
                 <td
                   style={{
@@ -259,4 +316,3 @@ export default function ProductosTable({
     </div>
   );
 }
-
