@@ -17,22 +17,19 @@ export default function Navbar() {
   ];
 
   return (
-    <nav style={{
+    <nav className="flex h-[62px] items-center justify-between px-5 sm:px-8 lg:px-[52px]" style={{
       position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100,
-      height: '62px', display: 'flex', alignItems: 'center',
-      justifyContent: 'space-between', padding: '0 52px',
       background: 'rgba(255,255,255,0.97)', backdropFilter: 'blur(20px)',
       borderBottom: '1px solid var(--border)',
     }}>
-      <Link href="/" style={{
+      <Link href="/" className="whitespace-nowrap text-[12px] tracking-[3px] sm:text-[14px] sm:tracking-[4px] lg:text-[16px] lg:tracking-[5px]" style={{
         fontFamily: 'var(--font-playfair)', fontWeight: 900,
-        fontSize: '16px', letterSpacing: '5px',
         color: 'var(--white)', textTransform: 'uppercase', textDecoration: 'none',
       }}>
         Rame Indumentaria
       </Link>
 
-      <ul style={{ display: 'flex', gap: '36px', listStyle: 'none' }}>
+      <ul className="hidden lg:flex lg:gap-9" style={{ listStyle: 'none' }}>
         {navItems.map((item) => (
           <li key={item.label}>
             <Link href={item.href} style={{
@@ -46,8 +43,8 @@ export default function Navbar() {
         ))}
       </ul>
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-        <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+      <div className="flex items-center gap-2 lg:gap-4">
+        <div className="hidden sm:flex" style={{ position: 'relative', alignItems: 'center' }}>
           <input
             type="text"
             placeholder="Buscar productos..."
@@ -63,8 +60,9 @@ export default function Navbar() {
               background: 'transparent', border: '1px solid var(--border)',
               padding: '7px 36px 7px 14px', color: 'var(--white)',
               fontFamily: 'var(--font-dm-sans)', fontSize: '12px',
-              width: '180px', outline: 'none',
+              outline: 'none',
             }}
+            className="w-[112px] sm:w-[150px] lg:w-[180px]"
           />
           <svg style={{ position: 'absolute', right: '10px', color: 'var(--gray)' }}
             width="13" height="13" viewBox="0 0 24 24" fill="none"

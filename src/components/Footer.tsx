@@ -3,10 +3,8 @@ import Link from 'next/link';
 export default function Footer() {
   return (
     <>
-      <footer style={{
+      <footer className="rame-footer" style={{
         background: '#f5f5f5', borderTop: '1px solid var(--border)',
-        padding: '60px 52px 32px',
-        display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr', gap: '52px',
       }}>
         <div>
           <div style={{
@@ -86,10 +84,9 @@ export default function Footer() {
         ))}
       </footer>
 
-      <div style={{
-        background: '#f5f5f5', padding: '20px 52px',
+      <div className="rame-footer-bottom" style={{
+        background: '#f5f5f5',
         borderTop: '1px solid var(--border)',
-        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
       }}>
         <span style={{ fontSize: '11px', color: 'var(--gray)', letterSpacing: '0.5px' }}>
           © {new Date().getFullYear()} Rame Indumentaria. Todos los derechos reservados.

@@ -42,13 +42,8 @@ export default async function CategoriesSection() {
   }
 
   return (
-    <section style={{ padding: '80px 52px', borderTop: '1px solid var(--border)' }}>
-      <div style={{
-        display: 'flex',
-        alignItems: 'baseline',
-        justifyContent: 'space-between',
-        marginBottom: '32px',
-      }}>
+    <section className="rame-categories" style={{ borderTop: '1px solid var(--border)' }}>
+      <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-baseline sm:justify-between">
         <h2 style={{
           fontFamily: 'var(--font-playfair)',
           fontWeight: 700,
@@ -78,23 +73,17 @@ export default async function CategoriesSection() {
         </Link>
       </div>
 
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: '2fr 1fr 1fr',
-        gridTemplateRows: '240px 240px',
-        gap: '2px',
-      }}>
+      <div className="rame-categories-grid gap-[2px]">
         {CATEGORIAS.map((cat) => {
           const count = conteos[cat.name] ?? 0;
           const label = count === 1 ? '1 producto' : `${count} productos`;
 
           return (
-            <Link key={cat.name} href={cat.href} style={{
+            <Link key={cat.name} href={cat.href} className={cat.span ? 'rame-category-span min-h-[220px] lg:min-h-0' : 'min-h-[220px] lg:min-h-0'} style={{
               position: 'relative',
               overflow: 'hidden',
               cursor: 'pointer',
               background: cat.bg,
-              gridRow: cat.span ? 'span 2' : undefined,
               textDecoration: 'none',
               display: 'block',
             }}>

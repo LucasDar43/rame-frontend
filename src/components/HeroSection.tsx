@@ -16,17 +16,17 @@ export default async function HeroSection() {
     : `${totalProductos}+`;
 
   return (
-    <section style={{
-      height: '100vh', position: 'relative',
+    <section className="min-h-[calc(100svh-62px)] lg:h-screen lg:min-h-0" style={{
+      position: 'relative',
       display: 'flex', alignItems: 'flex-end', overflow: 'hidden',
     }}>
       {/* Fondo */}
       <div style={{ position: 'absolute', inset: 0, background: '#f5f5f5', overflow: 'hidden' }}>
 
         {/* Ilustración familia */}
-        <svg style={{
+        <svg className="w-[130%] sm:w-full" style={{
           position: 'absolute', bottom: 0, left: '50%',
-          transform: 'translateX(-50%)', width: '100%',
+          transform: 'translateX(-50%)',
           maxWidth: '1000px', height: '88%',
         }} viewBox="0 0 1000 640" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMax meet">
           <defs>
@@ -95,10 +95,8 @@ export default async function HeroSection() {
       </div>
 
       {/* Contenido */}
-      <div style={{
-        position: 'relative', zIndex: 2, padding: '0 52px 72px',
-        width: '100%', display: 'flex',
-        alignItems: 'flex-end', justifyContent: 'space-between',
+      <div className="rame-hero flex w-full flex-col gap-8 lg:flex-row lg:items-end lg:justify-between lg:gap-0" style={{
+        position: 'relative', zIndex: 2,
       }}>
         <div style={{ maxWidth: '580px' }}>
           {/* Tag */}
@@ -118,7 +116,7 @@ export default async function HeroSection() {
           {/* Título */}
           <h1 style={{
             fontFamily: 'var(--font-playfair)', fontWeight: 900,
-            fontSize: '80px', lineHeight: 0.9, letterSpacing: '-2px',
+            lineHeight: 0.9, letterSpacing: '-2px',
             marginBottom: '22px', color: 'var(--white)',
             animation: 'fadeUp 0.6s ease 0.35s both',
           }}>
@@ -137,11 +135,10 @@ export default async function HeroSection() {
           </p>
 
           {/* CTAs */}
-          <div style={{
-            display: 'flex', gap: '12px', alignItems: 'center',
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center" style={{
             animation: 'fadeUp 0.6s ease 0.65s both',
           }}>
-            <Link href="/productos" style={{
+            <Link href="/productos" className="text-center" style={{
               background: '#111111', color: '#ffffff', border: 'none',
               padding: '14px 36px', fontFamily: 'var(--font-dm-sans)',
               fontWeight: 600, fontSize: '11px', letterSpacing: '2.5px',
@@ -151,7 +148,7 @@ export default async function HeroSection() {
             }}>
               Ver Catalogo
             </Link>
-            <Link href="/#nosotros" style={{
+            <Link href="/#nosotros" className="text-center" style={{
               background: 'transparent', color: 'var(--white)',
               border: '1px solid var(--border2)', padding: '14px 36px',
               fontFamily: 'var(--font-dm-sans)', fontWeight: 500,
@@ -166,8 +163,8 @@ export default async function HeroSection() {
         </div>
 
         {/* Stats */}
-        <div style={{ animation: 'fadeUp 0.6s ease 0.8s both' }}>
-          <div style={{ display: 'flex', gap: '44px', justifyContent: 'flex-end' }}>
+        <div className="rame-hero-stats" style={{ animation: 'fadeUp 0.6s ease 0.8s both' }}>
+          <div className="rame-hero-stats">
             {[
               { num: statsProductos, label: 'Productos' },
               { num: '3', label: 'Años' },

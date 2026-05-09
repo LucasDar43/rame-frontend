@@ -1,14 +1,12 @@
 export default function NosotrosSection() {
   return (
-    <div id="nosotros" style={{
-      margin: '0 52px 80px',
-      display: 'grid', gridTemplateColumns: '0.7fr 1.3fr',
+    <div id="nosotros" className="rame-nosotros" style={{
       gap: '0px', overflow: 'hidden',
     }}>
       <div
+        className="rame-nosotros-img"
         style={{
           position: 'relative',
-          height: '540px',
           width: '100%',
           overflow: 'hidden',
         }}
@@ -29,8 +27,8 @@ export default function NosotrosSection() {
       </div>
 
       {/* Contenido */}
-      <div style={{
-        background: '#f5f5f5', padding: '64px 52px',
+      <div className="px-6 py-12 lg:px-[52px] lg:py-16" style={{
+        background: '#f5f5f5',
         display: 'flex', flexDirection: 'column', justifyContent: 'center',
         borderLeft: '1px solid var(--border)',
       }}>

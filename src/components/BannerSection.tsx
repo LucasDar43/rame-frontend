@@ -2,14 +2,12 @@ import Link from 'next/link';
 
 export default function BannerSection() {
   return (
-    <div style={{
-      margin: '0 52px 80px', background: 'var(--white)',
-      padding: '52px 60px', display: 'flex',
-      alignItems: 'center', justifyContent: 'space-between',
+    <div className="rame-banner" style={{
+      background: 'var(--white)',
       position: 'relative', overflow: 'hidden',
     }}>
       {/* Texto de fondo decorativo */}
-      <div style={{
+      <div className="hidden sm:block" style={{
         position: 'absolute', right: '30px', top: '50%',
         transform: 'translateY(-50%)',
         fontFamily: 'var(--font-playfair)', fontWeight: 900,
@@ -28,7 +26,7 @@ export default function BannerSection() {
         </div>
         <h2 style={{
           fontFamily: 'var(--font-playfair)', fontWeight: 900,
-          fontSize: '48px', lineHeight: 0.95, letterSpacing: '-1px',
+          lineHeight: 0.95, letterSpacing: '-1px',
           color: '#ffffff', marginBottom: '10px',
         }}>
           Hasta 40% off<br/>
@@ -40,7 +38,7 @@ export default function BannerSection() {
         </p>
       </div>
 
-      <Link href="/productos?categoria=Liquidacion" style={{
+      <Link href="/productos?categoria=Liquidacion" className="rame-banner-cta" style={{
         background: '#ffffff',
         color: 'var(--white)',
         display: 'inline-block',

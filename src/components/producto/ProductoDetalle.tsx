@@ -20,6 +20,7 @@ export default function ProductoDetalle({ producto, variantes }: Props) {
   const [envioDescripcion, setEnvioDescripcion] = useState<string | null>(null);
   const [envioCargando, setEnvioCargando] = useState(false);
   const [agregado, setAgregado] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const agregadoTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const { addItem } = useCart();
 
@@ -53,6 +54,19 @@ export default function ProductoDetalle({ producto, variantes }: Props) {
       setImagenActiva(indexConColor);
     }
   }, [colorSeleccionado]);
+
+  useEffect(() => {
+    const updateIsMobile = () => {
+      setIsMobile(window.innerWidth < 1024);
+    };
+
+    updateIsMobile();
+    window.addEventListener('resize', updateIsMobile);
+
+    return () => {
+      window.removeEventListener('resize', updateIsMobile);
+    };
+  }, []);
 
   useEffect(() => {
     return () => {
@@ -113,7 +127,7 @@ export default function ProductoDetalle({ producto, variantes }: Props) {
   };
 
   return (
-    <div style={{ marginTop: '62px', padding: '52px', minHeight: '100vh' }}>
+    <div style={{ marginTop: '62px', padding: isMobile ? '16px' : '52px', minHeight: '100vh' }}>
 
       {/* Breadcrumb */}
       <div style={{
@@ -133,13 +147,22 @@ export default function ProductoDetalle({ producto, variantes }: Props) {
         <span style={{ color: 'var(--white)' }}>{producto.nombre}</span>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '80px' }}>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+          gap: isMobile ? '32px' : '80px',
+        }}
+      >
 
         {/* Columna izquierda - Galería */}
         <div>
           {/* Imagen principal */}
           <div style={{
-            background: '#f5f5f5', height: '560px', position: 'relative',
+            background: '#f5f5f5',
+            height: isMobile ? 'auto' : '560px',
+            aspectRatio: isMobile ? '1 / 1' : undefined,
+            position: 'relative',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             marginBottom: '8px', overflow: 'hidden',
           }}>
@@ -224,7 +247,15 @@ export default function ProductoDetalle({ producto, variantes }: Props) {
 
           {/* Miniaturas */}
           {imagenesCombinadas.length > 1 && (
-            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+            <div
+              style={{
+                display: 'flex',
+                gap: '8px',
+                flexWrap: isMobile ? 'nowrap' : 'wrap',
+                overflowX: isMobile ? 'auto' : 'visible',
+                paddingBottom: isMobile ? '4px' : 0,
+              }}
+            >
               {imagenesCombinadas.map((img, i) => (
                 <div
                   key={i}
@@ -314,6 +345,7 @@ export default function ProductoDetalle({ producto, variantes }: Props) {
                     onClick={() => setColorSeleccionado(color)}
                     style={{
                       padding: '8px 18px', fontSize: '11px', fontWeight: 500,
+                      minHeight: isMobile ? '44px' : undefined,
                       letterSpacing: '1px', textTransform: 'uppercase',
                       cursor: 'pointer', fontFamily: 'var(--font-dm-sans)',
                       background: colorSeleccionado === color ? '#111111' : 'transparent',
@@ -351,7 +383,7 @@ export default function ProductoDetalle({ producto, variantes }: Props) {
                       key={talle}
                       onClick={() => disponible && setTalleSeleccionado(talle)}
                       style={{
-                        width: '48px', height: '48px', fontSize: '12px',
+                        width: '48px', height: '48px', minHeight: isMobile ? '44px' : undefined, fontSize: '12px',
                         fontWeight: 500, letterSpacing: '0.5px',
                         cursor: disponible ? 'pointer' : 'not-allowed',
                         fontFamily: 'var(--font-dm-sans)',
@@ -393,6 +425,7 @@ export default function ProductoDetalle({ producto, variantes }: Props) {
             disabled={!varianteSeleccionada || varianteSeleccionada.stock === 0}
             style={{
               width: '100%', padding: '18px', fontSize: '11px',
+              height: isMobile ? '54px' : undefined,
               fontWeight: 600, letterSpacing: '2.5px', textTransform: 'uppercase',
               fontFamily: 'var(--font-dm-sans)', cursor: 'pointer',
               border: 'none', marginBottom: '12px',
@@ -433,6 +466,7 @@ export default function ProductoDetalle({ producto, variantes }: Props) {
                 }}
                 style={{
                   flex: 1, padding: '10px 14px', fontSize: '13px',
+                  minHeight: '46px',
                   border: '1px solid var(--border)', outline: 'none',
                   fontFamily: 'var(--font-dm-sans)', background: '#ffffff',
                   color: 'var(--white)',
@@ -443,6 +477,7 @@ export default function ProductoDetalle({ producto, variantes }: Props) {
                 disabled={codigoPostal.length < 4 || envioCargando}
                 style={{
                   padding: '10px 20px', fontSize: '11px', fontWeight: 600,
+                  minHeight: '46px',
                   letterSpacing: '1.5px', textTransform: 'uppercase',
                   fontFamily: 'var(--font-dm-sans)', cursor: 'pointer',
                   border: 'none',

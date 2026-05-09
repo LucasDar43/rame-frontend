@@ -8,11 +8,8 @@ interface FeaturedSectionProps {
 
 export default function FeaturedSection({ productos }: FeaturedSectionProps) {
   return (
-    <section style={{ padding: '80px 52px', borderTop: '1px solid var(--border)' }}>
-      <div style={{
-        display: 'flex', alignItems: 'baseline',
-        justifyContent: 'space-between', marginBottom: '32px',
-      }}>
+    <section className="rame-featured" style={{ borderTop: '1px solid var(--border)' }}>
+      <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-baseline sm:justify-between">
         <h2 style={{
           fontFamily: 'var(--font-playfair)', fontWeight: 700,
           fontSize: '34px', letterSpacing: '-0.5px', color: 'var(--white)',
@@ -33,9 +30,7 @@ export default function FeaturedSection({ productos }: FeaturedSectionProps) {
       </div>
 
       {productos.length === 0 ? (
-        <div style={{
-          display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '2px',
-        }}>
+        <div className="rame-featured-grid">
           <div style={{
             gridColumn: '1 / -1',
             minHeight: '420px',
@@ -50,9 +45,7 @@ export default function FeaturedSection({ productos }: FeaturedSectionProps) {
           </div>
         </div>
       ) : (
-        <div style={{
-          display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '2px',
-        }}>
+        <div className="rame-featured-grid">
           {productos.map((p) => (
             <ProductCard key={p.id} producto={p} />
           ))}

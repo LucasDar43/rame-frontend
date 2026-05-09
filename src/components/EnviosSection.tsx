@@ -38,10 +38,7 @@ const envios = [
 
 export default function EnviosSection() {
   return (
-    <div style={{
-      margin: '0 52px 80px',
-      display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '2px',
-    }}>
+    <div className="rame-envios">
       {envios.map((e) => (
         <div key={e.titulo} style={{
           background: 'var(--card)', padding: '28px',

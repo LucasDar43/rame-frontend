@@ -17,7 +17,7 @@
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; overflow-x: hidden; }
 
 body {
   background: #ffffff;
@@ -25,6 +25,7 @@ body {
   font-family: 'DM Sans', sans-serif;
   font-weight: 300;
   overflow-x: hidden;
+  width: 100%;
 }
 
 ::-webkit-scrollbar { width: 3px; }
@@ -44,4 +45,57 @@ body {
 @keyframes spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
+}
+
+.rame-hero { padding: 0 52px 72px; }
+.rame-hero h1 { font-size: 80px; }
+.rame-hero-stats { display: flex; gap: 44px; }
+
+.rame-categories { padding: 80px 52px; }
+.rame-categories-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; grid-template-rows: 240px 240px; }
+.rame-category-span { grid-row: span 2; }
+
+.rame-featured { padding: 80px 52px; }
+.rame-featured-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; }
+
+.rame-nosotros { margin: 0 52px 80px; display: grid; grid-template-columns: 0.7fr 1.3fr; }
+.rame-nosotros-img { height: 540px; }
+
+.rame-banner { margin: 0 52px 80px; padding: 52px 60px; display: flex; align-items: center; justify-content: space-between; }
+.rame-banner h2 { font-size: 48px; }
+.rame-banner-cta { flex-shrink: 0; }
+
+.rame-envios { margin: 0 52px 80px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; }
+
+.rame-footer { padding: 60px 52px 32px; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 52px; }
+.rame-footer-bottom { padding: 20px 52px; display: flex; justify-content: space-between; align-items: center; }
+
+@media (max-width: 768px) {
+  .rame-hero { padding: 0 16px 48px; }
+  .rame-hero h1 { font-size: 42px; line-height: 1; letter-spacing: -1px; }
+  .rame-hero-stats { display: none; }
+
+  .rame-categories { padding: 48px 16px; }
+  .rame-categories-grid { grid-template-columns: 1fr 1fr; grid-template-rows: 180px 180px 180px; }
+  .rame-category-span { grid-row: auto; }
+
+  .rame-featured { padding: 48px 16px; }
+  .rame-featured-grid { grid-template-columns: repeat(2, 1fr); }
+
+  .rame-nosotros { margin: 0 16px 48px; grid-template-columns: 1fr; }
+  .rame-nosotros-img { height: 280px; }
+
+  .rame-banner { margin: 0 16px 48px; padding: 32px 24px; flex-direction: column; gap: 24px; align-items: flex-start; }
+  .rame-banner h2 { font-size: 32px; }
+  .rame-banner-cta { width: 100%; text-align: center; }
+
+  .rame-envios { margin: 0 16px 48px; grid-template-columns: 1fr; }
+
+  .rame-footer { padding: 40px 16px 24px; grid-template-columns: 1fr 1fr; gap: 32px; }
+  .rame-footer-bottom { padding: 16px; flex-direction: column; gap: 8px; text-align: center; }
+}
+
+@media (max-width: 480px) {
+  .rame-categories-grid { grid-template-columns: 1fr; grid-template-rows: repeat(4, 200px); }
+  .rame-footer { grid-template-columns: 1fr; }
 }

@@ -46,12 +46,26 @@ export default function CheckoutPage() {
   const [cuponInfo, setCuponInfo] = useState<CuponValido | null>(null);
   const [cuponLoading, setCuponLoading] = useState(false);
   const [cuponError, setCuponError] = useState('');
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     if (items.length === 0) {
       router.replace('/carrito');
     }
   }, [items.length, router]);
+
+  useEffect(() => {
+    const updateIsMobile = () => {
+      setIsMobile(window.innerWidth < 1024);
+    };
+
+    updateIsMobile();
+    window.addEventListener('resize', updateIsMobile);
+
+    return () => {
+      window.removeEventListener('resize', updateIsMobile);
+    };
+  }, []);
 
   useEffect(() => {
     if (form.codigoPostal.length >= 4) {
@@ -221,7 +235,7 @@ export default function CheckoutPage() {
         marginTop: '62px',
         minHeight: '100vh',
         background: '#ffffff',
-        padding: '52px',
+        padding: isMobile ? '16px' : '52px',
       }}
     >
       <div
@@ -315,7 +329,7 @@ export default function CheckoutPage() {
           <div
             style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+              gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(320px, 1fr))',
               gap: '36px',
               alignItems: 'start',
             }}
@@ -389,7 +403,13 @@ export default function CheckoutPage() {
                 ) : null}
               </Field>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+                  gap: '12px',
+                }}
+              >
                 <Field label="Numero" required={true}>
                   <input
                     type="text"
@@ -417,7 +437,13 @@ export default function CheckoutPage() {
               </div>
 
               <Field label="Codigo postal" required={true}>
-                <div style={{ display: 'flex', gap: '8px' }}>
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: isMobile ? 'column' : 'row',
+                    gap: '8px',
+                  }}
+                >
                   <input
                     type="text"
                     value={form.codigoPostal}
@@ -437,6 +463,7 @@ export default function CheckoutPage() {
                     disabled={form.codigoPostal.length < 4 || envioLoading || loading}
                     style={{
                       height: '46px',
+                      width: isMobile ? '100%' : undefined,
                       padding: '0 16px',
                       border: 'none',
                       background: form.codigoPostal.length >= 4 ? 'var(--accent)' : '#cccccc',
@@ -507,7 +534,13 @@ export default function CheckoutPage() {
                 }}>
                   Cupón de descuento
                 </label>
-                <div style={{ display: 'flex', gap: '8px' }}>
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: isMobile ? 'column' : 'row',
+                    gap: '8px',
+                  }}
+                >
                   <input
                     type="text"
                     value={cuponCodigo}
@@ -526,6 +559,7 @@ export default function CheckoutPage() {
                     disabled={!cuponCodigo.trim() || cuponLoading || loading}
                     style={{
                       height: '46px',
+                      width: isMobile ? '100%' : undefined,
                       padding: '0 16px',
                       border: 'none',
                       background: !cuponCodigo.trim() ? '#cccccc' : 'var(--accent)',
@@ -581,8 +615,8 @@ export default function CheckoutPage() {
                 border: '1px solid var(--border)',
                 background: 'var(--card)',
                 padding: '28px',
-                position: 'sticky',
-                top: '82px',
+                position: isMobile ? 'static' : 'sticky',
+                top: isMobile ? undefined : '82px',
               }}
             >
               <p

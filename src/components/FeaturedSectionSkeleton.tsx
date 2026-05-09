@@ -1,12 +1,7 @@
 export default function FeaturedSectionSkeleton() {
   return (
-    <section style={{ padding: '80px 52px', borderTop: '1px solid var(--border)' }}>
-      <div style={{
-        display: 'flex',
-        alignItems: 'baseline',
-        justifyContent: 'space-between',
-        marginBottom: '32px',
-      }}>
+    <section className="px-5 py-14 sm:px-8 lg:px-[52px] lg:py-20" style={{ borderTop: '1px solid var(--border)' }}>
+      <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-baseline sm:justify-between">
         <div style={{
           width: '200px',
           height: '34px',
@@ -21,11 +16,7 @@ export default function FeaturedSectionSkeleton() {
         }} />
       </div>
 
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(4, 1fr)',
-        gap: '2px',
-      }}>
+      <div className="grid grid-cols-1 gap-[2px] sm:grid-cols-2 lg:grid-cols-4">
         {Array.from({ length: 4 }).map((_, index) => (
           <div
             key={index}
