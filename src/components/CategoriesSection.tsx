@@ -1,32 +1,33 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { getConteosCategorias } from '@/lib/api';
 
 const CATEGORIAS = [
   {
     label: 'Coleccion',
     name: 'Mujer',
-    bg: 'linear-gradient(145deg, #2a2a2a, #1a1a1a)',
+    imagen: '/images/categorias/mujer.webp',
     span: true,
     href: '/productos?categoria=Mujer',
   },
   {
     label: 'Coleccion',
     name: 'Hombre',
-    bg: 'linear-gradient(145deg, #242424, #181818)',
+    imagen: '/images/categorias/hombre.webp',
     span: false,
     href: '/productos?categoria=Hombre',
   },
   {
     label: 'Temporada',
     name: 'Liquidacion',
-    bg: 'linear-gradient(145deg, #202020, #141414)',
+    imagen: '/images/categorias/liquidacion.webp',
     span: false,
     href: '/productos?categoria=Liquidacion',
   },
   {
     label: 'Lo ultimo',
     name: 'Novedades',
-    bg: 'linear-gradient(145deg, #2c2c2c, #1e1e1e)',
+    imagen: '/images/categorias/novedades.webp',
     span: false,
     href: '/productos?categoria=Novedades',
   },
@@ -83,22 +84,33 @@ export default async function CategoriesSection() {
               position: 'relative',
               overflow: 'hidden',
               cursor: 'pointer',
-              background: cat.bg,
+              background: 'transparent',
               textDecoration: 'none',
               display: 'block',
             }}>
+              <Image
+                src={cat.imagen}
+                alt={cat.name}
+                fill
+                style={{ objectFit: 'cover', zIndex: 0 }}
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                priority={cat.span}
+              />
+
               <div style={{
                 position: 'absolute',
                 inset: 0,
                 opacity: 0.03,
                 backgroundImage: 'radial-gradient(circle, #fff 1px, transparent 1px)',
                 backgroundSize: '22px 22px',
+                zIndex: 1,
               }}/>
 
               <div style={{
                 position: 'absolute',
                 inset: 0,
                 background: 'linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 55%)',
+                zIndex: 1,
               }}/>
 
               <div style={{
