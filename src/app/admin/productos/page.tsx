@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { editarProductosMasivo, eliminarProducto, getProductosAdmin } from '@/lib/api';
+import { editarProductosMasivo, eliminarProducto, getProductosAdmin, toggleDestacadoProducto } from '@/lib/api';
 import { Producto } from '@/types';
 import ImportarExcelModal from '@/components/admin/ImportarExcelModal';
 import ProductosTable from './components/ProductosTable';
@@ -19,6 +19,7 @@ export default function AdminProductosPage() {
   const [reloadKey, setReloadKey] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [deletingId, setDeletingId] = useState<number | null>(null);
+  const [togglingDestacadoId, setTogglingDestacadoId] = useState<number | null>(null);
   const [toastVisible, setToastVisible] = useState(false);
   const [modalImportar, setModalImportar] = useState(false);
   const [busqueda, setBusqueda] = useState('');
@@ -88,6 +89,20 @@ export default function AdminProductosPage() {
       alert(error instanceof Error ? error.message : 'Error al eliminar el producto');
     } finally {
       setDeletingId(null);
+    }
+  };
+
+  const handleToggleDestacado = async (id: number) => {
+    setTogglingDestacadoId(id);
+    try {
+      const actualizado = await toggleDestacadoProducto(id);
+      setProductos((prev) =>
+        prev.map((p) => (p.id === id ? { ...p, destacado: actualizado.destacado } : p))
+      );
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Error al cambiar destacado');
+    } finally {
+      setTogglingDestacadoId(null);
     }
   };
 
@@ -453,6 +468,8 @@ export default function AdminProductosPage() {
                 productos={productos}
                 onEliminar={handleEliminar}
                 deletingId={deletingId}
+                onToggleDestacado={handleToggleDestacado}
+                togglingDestacadoId={togglingDestacadoId}
                 seleccionados={seleccionados}
                 onToggleSeleccion={(id: number) => {
                   setSeleccionados((prev) =>

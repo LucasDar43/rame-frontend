@@ -10,6 +10,7 @@ export interface Producto {
   imagenUrl?: string;
   imagenes: ImagenProducto[];
   tieneVariantes?: boolean;
+  destacado?: boolean;
   activo: boolean;
   fechaCreacion: string;
 }

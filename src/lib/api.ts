@@ -60,6 +60,10 @@ export async function getProductos(page = 0, size = 12): Promise<Page<Producto>>
   return fetchApi(`/productos?page=${page}&size=${size}`);
 }
 
+export async function getProductosDestacados(): Promise<Producto[]> {
+  return fetchApi('/productos/destacados');
+}
+
 export async function getProductosAdmin(
   page = 0,
   size = 20,
@@ -110,6 +114,13 @@ export async function actualizarProducto(id: number, data: Partial<Producto>): P
     method: 'PUT',
     headers: authHeaders(),
     body: JSON.stringify(data),
+  });
+}
+
+export async function toggleDestacadoProducto(id: number): Promise<Producto> {
+  return fetchApi(`/productos/${id}/destacado`, {
+    method: 'PATCH',
+    headers: authHeaders(),
   });
 }
 
