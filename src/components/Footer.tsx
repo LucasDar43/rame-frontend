@@ -59,11 +59,17 @@ export default function Footer() {
                   Liquidacion: '/productos?categoria=Liquidacion',
                   Novedades: '/productos?categoria=Novedades',
                 };
-                const href = tiendaHrefs[link];
+                const ayudaHrefs: Record<string, string> = {
+                  'Como comprar': '/como-comprar',
+                  'Envios y zonas': '/envios-y-zonas',
+                  Cambios: '/cambios',
+                  'Preguntas frecuentes': '/preguntas-frecuentes',
+                };
+                const href = tiendaHrefs[link] ?? ayudaHrefs[link];
 
                 return (
                   <li key={link}>
-                    {col.title === 'Tienda' && href ? (
+                    {href ? (
                       <Link href={href} style={{
                         fontSize: '13px', color: 'var(--gray)', textDecoration: 'none',
                       }}>
@@ -91,15 +97,42 @@ export default function Footer() {
         <span style={{ fontSize: '11px', color: 'var(--gray)', letterSpacing: '0.5px' }}>
           © {new Date().getFullYear()} Rame Indumentaria. Todos los derechos reservados.
         </span>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '11px', color: 'var(--gray)' }}>
-          <span>Pagos con</span>
-          <span style={{
-            background: 'var(--card)', color: 'var(--white)', fontWeight: 700,
-            fontSize: '10px', padding: '3px 8px', letterSpacing: '1px',
-            border: '1px solid var(--border)',
-          }}>
-            MercadoPago
-          </span>
+        <div className="w-full max-w-2xl pt-4 sm:w-auto sm:pt-0">
+          <div className="flex flex-col gap-3 border-t border-[var(--border)] pt-4 sm:flex-row sm:items-center sm:border-t-0 sm:pt-0">
+            <div className="flex h-14 w-32 shrink-0 items-center sm:justify-end">
+              <img
+                src="/images/logos/mercadopago.svg"
+                alt="Mercado Pago"
+                className="h-12 w-auto"
+              />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <svg
+                  aria-hidden="true"
+                  className="h-4 w-4 shrink-0 text-[var(--gray)]"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <rect width="14" height="10" x="5" y="11" rx="2" />
+                  <path d="M8 11V7a4 4 0 0 1 8 0v4" />
+                </svg>
+                <h3 className="text-sm font-semibold leading-6 text-[var(--black)]">
+                  Pagos seguros con MercadoPago
+                </h3>
+              </div>
+              <p className="mt-1 max-w-md text-sm leading-6 text-[var(--gray)]">
+                Realizá tu compra de forma segura mediante la plataforma oficial de MercadoPago.
+              </p>
+              <p className="mt-1 text-xs leading-5 text-[var(--gray)]">
+                Tarjetas, transferencias y medios de pago habilitados.
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </>
