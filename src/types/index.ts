@@ -136,3 +136,17 @@ export interface CuponValido {
   valido: boolean;
   mensaje: string;
 }
+
+export interface ZonaEnvio {
+  id: number;
+  codigo: string;
+  nombre: string;
+  descripcion: string;
+  costo: number;
+  fechaActualizacion: string;
+}
+
+export interface ZonaEnvioUpdate {
+  costo: number;
+  descripcion?: string;
+}

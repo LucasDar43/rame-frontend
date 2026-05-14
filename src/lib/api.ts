@@ -11,6 +11,8 @@ import {
   CuponResponse,
   CuponRequest,
   CuponValido,
+  ZonaEnvio,
+  ZonaEnvioUpdate,
 } from '@/types';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8080/api';
@@ -448,4 +450,19 @@ export async function validarCupon(codigo: string): Promise<CuponValido> {
   return fetchApi(
     `/cupones/validar?codigo=${encodeURIComponent(codigo)}`
   );
+}
+
+export async function getZonasEnvio(): Promise<ZonaEnvio[]> {
+  return fetchApi('/zonas-envio');
+}
+
+export async function actualizarZonaEnvio(
+  id: number,
+  data: ZonaEnvioUpdate
+): Promise<ZonaEnvio> {
+  return fetchApi(`/zonas-envio/${id}`, {
+    method: 'PUT',
+    headers: authHeaders(),
+    body: JSON.stringify(data),
+  });
 }
