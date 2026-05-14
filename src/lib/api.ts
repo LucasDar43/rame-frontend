@@ -466,3 +466,14 @@ export async function actualizarZonaEnvio(
     body: JSON.stringify(data),
   });
 }
+
+export async function cambiarEstadoOperativo(
+  ordenId: number,
+  estadoOperativo: string
+): Promise<OrdenResponse> {
+  return fetchApi(`/ordenes/${ordenId}/estado-operativo`, {
+    method: 'PATCH',
+    headers: authHeaders(),
+    body: JSON.stringify({ estadoOperativo }),
+  });
+}

@@ -37,6 +37,22 @@ const estadoStyles: Record<
   },
 };
 
+const estadoOperativoStyles: Record<string, { background: string; color: string }> = {
+  PENDIENTE_PREPARACION: { background: 'rgba(234, 179, 8, 0.12)', color: '#854d0e' },
+  EN_PREPARACION:        { background: 'rgba(59, 130, 246, 0.12)', color: '#1d4ed8' },
+  LISTO_PARA_ENVIO:      { background: 'rgba(168, 85, 247, 0.12)', color: '#7e22ce' },
+  ENVIADO:               { background: 'rgba(234, 88, 12, 0.12)',  color: '#c2410c' },
+  ENTREGADO:             { background: 'rgba(18, 183, 106, 0.12)', color: '#027a48' },
+};
+
+const estadoOperativoLabel: Record<string, string> = {
+  PENDIENTE_PREPARACION: 'Pendiente',
+  EN_PREPARACION:        'En preparación',
+  LISTO_PARA_ENVIO:      'Listo para envío',
+  ENVIADO:               'Enviado',
+  ENTREGADO:             'Entregado',
+};
+
 export default function OrdenesTable({ ordenes }: OrdenesTableProps) {
   const router = useRouter();
   const [hoveredId, setHoveredId] = useState<number | null>(null);
@@ -67,7 +83,7 @@ export default function OrdenesTable({ ordenes }: OrdenesTableProps) {
       >
         <thead>
           <tr style={{ background: 'var(--card)' }}>
-            {['ID', 'Cliente', 'Email', 'Total', 'Estado', 'Fecha', 'Acción'].map((title) => (
+            {['ID', 'Cliente', 'Email', 'Total', 'Estado', 'Estado operativo', 'Fecha', 'Acción'].map((title) => (
               <th
                 key={title}
                 style={{
@@ -157,6 +173,24 @@ export default function OrdenesTable({ ordenes }: OrdenesTableProps) {
                   >
                     {orden.estado}
                   </span>
+                </td>
+                <td style={{ padding: '16px', borderBottom: '1px solid var(--border)' }}>
+                  {orden.estadoOperativo ? (
+                    <span style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      padding: '6px 10px',
+                      borderRadius: '999px',
+                      fontSize: '12px',
+                      fontWeight: 600,
+                      background: estadoOperativoStyles[orden.estadoOperativo]?.background ?? 'rgba(152,162,179,0.18)',
+                      color: estadoOperativoStyles[orden.estadoOperativo]?.color ?? '#475467',
+                    }}>
+                      {estadoOperativoLabel[orden.estadoOperativo] ?? orden.estadoOperativo}
+                    </span>
+                  ) : (
+                    <span style={{ fontSize: '12px', color: 'var(--gray)' }}>—</span>
+                  )}
                 </td>
                 <td
                   style={{

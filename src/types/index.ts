@@ -71,6 +71,7 @@ export interface OrdenResponse {
   emailComprador: string;
   total: number;
   estado: 'PENDIENTE' | 'APROBADO' | 'RECHAZADO' | 'CANCELADO';
+  estadoOperativo?: EstadoOperativo;
   mpPreferenceId: string;
   initPoint: string;
   items: OrdenItemDTO[];
@@ -106,8 +107,16 @@ export interface OrdenResumen {
   emailComprador: string;
   total: number;
   estado: 'PENDIENTE' | 'APROBADO' | 'RECHAZADO' | 'CANCELADO';
+  estadoOperativo?: EstadoOperativo;
   fechaCreacion: string;
 }
+
+export type EstadoOperativo =
+  | 'PENDIENTE_PREPARACION'
+  | 'EN_PREPARACION'
+  | 'LISTO_PARA_ENVIO'
+  | 'ENVIADO'
+  | 'ENTREGADO';
 
 export interface EnvioResponse {
   costo: number;

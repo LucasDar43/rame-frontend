@@ -2,8 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { getOrden } from '@/lib/api';
+import { cambiarEstadoOperativo, getOrden } from '@/lib/api';
 import { OrdenResponse } from '@/types';
+import type { EstadoOperativo } from '@/types';
 
 export default function AdminOrdenDetallePage() {
   const params = useParams();
@@ -15,6 +16,8 @@ export default function AdminOrdenDetallePage() {
   const [orden, setOrden] = useState<OrdenResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [cambiandoEstado, setCambiandoEstado] = useState(false);
+  const [errorEstado, setErrorEstado] = useState('');
 
   useEffect(() => {
     let active = true;
@@ -65,6 +68,20 @@ export default function AdminOrdenDetallePage() {
     PENDIENTE: { background: 'rgba(234, 179, 8, 0.12)', color: '#854d0e' },
     RECHAZADO: { background: 'rgba(220, 38, 38, 0.12)', color: '#dc2626' },
     CANCELADO: { background: 'rgba(152, 162, 179, 0.18)', color: '#475467' },
+  };
+
+  const handleCambiarEstado = async (nuevoEstado: EstadoOperativo) => {
+    if (!orden) return;
+    setCambiandoEstado(true);
+    setErrorEstado('');
+    try {
+      const actualizada = await cambiarEstadoOperativo(orden.id, nuevoEstado);
+      setOrden(actualizada);
+    } catch (err) {
+      setErrorEstado(err instanceof Error ? err.message : 'No se pudo actualizar el estado.');
+    } finally {
+      setCambiandoEstado(false);
+    }
   };
 
   if (!ordenId) {
@@ -245,6 +262,67 @@ export default function AdminOrdenDetallePage() {
               >
                 {orden.estado}
               </span>
+            </div>
+          </div>
+
+          <div style={{ marginTop: '24px', paddingTop: '24px', borderTop: '1px solid var(--border)' }}>
+            <p style={{
+              margin: '0 0 12px',
+              fontSize: '12px',
+              letterSpacing: '0.08em',
+              textTransform: 'uppercase',
+              color: 'var(--gray)',
+            }}>
+              Estado operativo
+            </p>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                {(
+                  [
+                    { value: 'PENDIENTE_PREPARACION', label: 'Pendiente de preparación' },
+                    { value: 'EN_PREPARACION',        label: 'En preparación' },
+                    { value: 'LISTO_PARA_ENVIO',      label: 'Listo para envío' },
+                    { value: 'ENVIADO',               label: 'Enviado' },
+                    { value: 'ENTREGADO',             label: 'Entregado' },
+                  ] as const
+                ).map((opcion) => {
+                  const activo = orden.estadoOperativo === opcion.value;
+                  return (
+                    <button
+                      key={opcion.value}
+                      type="button"
+                      onClick={() => handleCambiarEstado(opcion.value)}
+                      disabled={cambiandoEstado || activo}
+                      style={{
+                        height: '36px',
+                        padding: '0 16px',
+                        border: activo ? 'none' : '1px solid var(--border2)',
+                        background: activo ? '#111111' : '#ffffff',
+                        color: activo ? '#ffffff' : 'var(--black)',
+                        fontSize: '12px',
+                        fontWeight: activo ? 600 : 400,
+                        letterSpacing: '0.04em',
+                        cursor: cambiandoEstado || activo ? 'not-allowed' : 'pointer',
+                        opacity: cambiandoEstado && !activo ? 0.6 : 1,
+                        fontFamily: 'var(--font-dm-sans)',
+                        whiteSpace: 'nowrap',
+                        transition: 'background 0.15s ease, color 0.15s ease',
+                      }}
+                    >
+                      {opcion.label}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {cambiandoEstado && (
+                <span style={{ fontSize: '13px', color: 'var(--gray)' }}>Guardando...</span>
+              )}
+
+              {errorEstado && (
+                <span style={{ fontSize: '13px', color: '#b42318' }}>{errorEstado}</span>
+              )}
             </div>
           </div>
         </section>
