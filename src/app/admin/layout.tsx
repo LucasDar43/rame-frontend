@@ -98,6 +98,11 @@ function Sidebar() {
           label="Zonas de envío"
           onClick={() => router.push('/admin/zonas')}
         />
+        <SidebarItem
+          active={pathname.includes('/admin/audit-logs')}
+          label="Auditoría"
+          onClick={() => router.push('/admin/audit-logs')}
+        />
       </nav>
     </aside>
   );

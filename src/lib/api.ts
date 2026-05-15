@@ -13,6 +13,7 @@ import {
   CuponValido,
   ZonaEnvio,
   ZonaEnvioUpdate,
+  AuditLogResponseDTO,
 } from '@/types';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8080/api';
@@ -475,5 +476,11 @@ export async function cambiarEstadoOperativo(
     method: 'PATCH',
     headers: authHeaders(),
     body: JSON.stringify({ estadoOperativo }),
+  });
+}
+
+export async function getAuditLogs(page = 0, size = 20): Promise<Page<AuditLogResponseDTO>> {
+  return fetchApi(`/admin/audit-logs?page=${page}&size=${size}`, {
+    headers: authHeaders(),
   });
 }

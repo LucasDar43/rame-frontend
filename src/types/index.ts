@@ -159,3 +159,14 @@ export interface ZonaEnvioUpdate {
   costo: number;
   descripcion?: string;
 }
+
+export interface AuditLogResponseDTO {
+  id: number;
+  usuarioEmail: string;
+  accion: string;
+  entidad: string;
+  entidadId: string | null;
+  ip: string;
+  metadataJson: string | null;
+  fecha: string;
+}
