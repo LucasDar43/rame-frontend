@@ -78,8 +78,11 @@ export default function AdminProductosPage() {
   }, []);
 
   const handleEliminar = async (id: number) => {
-    const confirmado = window.confirm('\u00bfEliminar este producto? Esta acci\u00f3n no se puede deshacer.');
-    if (!confirmado) return;
+    const confirmar = window.confirm(
+      '¿Seguro que querés desactivar este producto? ' +
+      'No se verá en la tienda, pero seguirá existiendo en el sistema.'
+    );
+    if (!confirmar) return;
 
     setDeletingId(id);
     try {
@@ -378,6 +381,14 @@ export default function AdminProductosPage() {
                   accionMasiva === 'precio') && !valorMasivo)
               }
               onClick={async () => {
+                if (accionMasiva === 'desactivar') {
+                  const confirmar = window.confirm(
+                    '¿Seguro que querés desactivar este producto? ' +
+                    'No se verá en la tienda, pero seguirá existiendo en el sistema.'
+                  );
+                  if (!confirmar) return;
+                }
+
                 setAplicandoMasivo(true);
                 try {
                   const payload: {

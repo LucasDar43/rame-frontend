@@ -72,6 +72,12 @@ export default function AdminOrdenDetallePage() {
 
   const handleCambiarEstado = async (nuevoEstado: EstadoOperativo) => {
     if (!orden) return;
+
+    const confirmar = window.confirm(
+      'Vas a cambiar el estado de esta orden. ¿Confirmás la operación?'
+    );
+    if (!confirmar) return;
+
     setCambiandoEstado(true);
     setErrorEstado('');
     try {

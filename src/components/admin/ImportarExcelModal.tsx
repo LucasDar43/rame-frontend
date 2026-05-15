@@ -33,6 +33,13 @@ export default function ImportarExcelModal({
   const handleImportar = async () => {
     if (!archivo) return;
 
+    const confirmar = window.confirm(
+      'Esta importación puede modificar muchos productos, precios y stock. ' +
+      'Se recomienda tener un backup reciente antes de continuar. ' +
+      '¿Querés continuar?'
+    );
+    if (!confirmar) return;
+
     setLoading(true);
     setError(null);
     setResultado(null);
