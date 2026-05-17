@@ -10,7 +10,7 @@ interface ProductCardProps {
 
 export default function ProductCard({ producto }: ProductCardProps) {
   return (
-    <div
+    <article
       style={{
         background: 'var(--card)',
         cursor: 'pointer',
@@ -74,18 +74,18 @@ export default function ProductCard({ producto }: ProductCardProps) {
             {producto.marca}
           </div>
 
-          <div
+          <h3
             style={{
               fontFamily: 'var(--font-playfair)',
               fontWeight: 700,
               fontSize: '17px',
               color: 'var(--white)',
-              marginBottom: '10px',
+              margin: '0 0 10px',
               lineHeight: 1.2,
             }}
           >
             {producto.nombre}
-          </div>
+          </h3>
 
           <div
             style={{
@@ -137,6 +137,6 @@ export default function ProductCard({ producto }: ProductCardProps) {
           </div>
         </div>
       </Link>
-    </div>
+    </article>
   );
 }

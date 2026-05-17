@@ -320,24 +320,31 @@ export default function ProductoDetalle({ producto, variantes }: Props) {
 
           {/* Descripción */}
           {producto.descripcion && (
-            <p style={{
-              fontSize: '14px', color: 'var(--light)', lineHeight: 1.8,
-              fontWeight: 300, marginBottom: '36px',
-              paddingBottom: '36px', borderBottom: '1px solid var(--border)',
-            }}>
-              {producto.descripcion}
-            </p>
+            <section style={{ marginBottom: '36px', paddingBottom: '36px', borderBottom: '1px solid var(--border)' }}>
+              <h2 style={{
+                fontSize: '10px', fontWeight: 600, letterSpacing: '2px',
+                textTransform: 'uppercase', color: 'var(--gray)', margin: '0 0 12px',
+              }}>
+                Descripción
+              </h2>
+              <p style={{
+                fontSize: '14px', color: 'var(--light)', lineHeight: 1.8,
+                fontWeight: 300, margin: 0,
+              }}>
+                {producto.descripcion}
+              </p>
+            </section>
           )}
 
           {/* Colores */}
           {colores.length > 0 && (
             <div style={{ marginBottom: '28px' }}>
-              <div style={{
+              <h2 style={{
                 fontSize: '10px', fontWeight: 600, letterSpacing: '2px',
-                textTransform: 'uppercase', color: 'var(--gray)', marginBottom: '12px',
+                textTransform: 'uppercase', color: 'var(--gray)', margin: '0 0 12px',
               }}>
                 Color {colorSeleccionado && `- ${colorSeleccionado}`}
-              </div>
+              </h2>
               <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                 {colores.map((color) => (
                   <button
@@ -365,12 +372,12 @@ export default function ProductoDetalle({ producto, variantes }: Props) {
           {/* Talles */}
           {talles.length > 0 && (
             <div style={{ marginBottom: '36px' }}>
-              <div style={{
+              <h2 style={{
                 fontSize: '10px', fontWeight: 600, letterSpacing: '2px',
-                textTransform: 'uppercase', color: 'var(--gray)', marginBottom: '12px',
+                textTransform: 'uppercase', color: 'var(--gray)', margin: '0 0 12px',
               }}>
                 Talle {talleSeleccionado && `- ${talleSeleccionado}`}
-              </div>
+              </h2>
               <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                 {talles.map((talle) => {
                   const disponible = variantes.some(
@@ -448,12 +455,12 @@ export default function ProductoDetalle({ producto, variantes }: Props) {
             marginTop: '28px', padding: '20px',
             border: '1px solid var(--border)', background: '#fafafa',
           }}>
-            <div style={{
+            <h2 style={{
               fontSize: '10px', fontWeight: 700, letterSpacing: '2px',
-              textTransform: 'uppercase', color: 'var(--white)', marginBottom: '14px',
+              textTransform: 'uppercase', color: 'var(--white)', margin: '0 0 14px',
             }}>
               Calcular envío
-            </div>
+            </h2>
             <div style={{ display: 'flex', gap: '8px' }}>
               <input
                 type="text"

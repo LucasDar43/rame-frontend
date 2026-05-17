@@ -7,13 +7,13 @@ export default function Footer() {
         background: '#f5f5f5', borderTop: '1px solid var(--border)',
       }}>
         <div>
-          <div style={{
+          <h3 style={{
             fontFamily: 'var(--font-playfair)', fontWeight: 900,
             fontSize: '14px', letterSpacing: '4px',
-            color: 'var(--white)', textTransform: 'uppercase', marginBottom: '14px',
+            color: 'var(--white)', textTransform: 'uppercase', margin: '0 0 14px',
           }}>
             Rame Indumentaria
-          </div>
+          </h3>
           <p style={{
             fontSize: '13px', color: 'var(--gray)', lineHeight: 1.7,
             maxWidth: '260px', marginBottom: '24px',
@@ -45,12 +45,12 @@ export default function Footer() {
           { title: 'Contacto', links: ['WhatsApp', 'Instagram'] },
         ].map((col) => (
           <div key={col.title}>
-            <div style={{
+            <h3 style={{
               fontSize: '10px', fontWeight: 700, letterSpacing: '3px',
-              textTransform: 'uppercase', color: 'var(--white)', marginBottom: '20px',
+              textTransform: 'uppercase', color: 'var(--white)', margin: '0 0 20px',
             }}>
               {col.title}
-            </div>
+            </h3>
             <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '10px' }}>
               {col.links.map((link) => {
                 const tiendaHrefs: Record<string, string> = {
