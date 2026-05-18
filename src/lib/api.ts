@@ -159,10 +159,25 @@ export async function actualizarImagenProducto(
 }
 
 export async function eliminarProducto(id: number): Promise<void> {
-  return fetchApi(`/productos/${id}`, {
+  const res = await fetch(`${BASE_URL}/productos/${id}`, {
     method: 'DELETE',
     headers: authHeaders(),
   });
+
+  if (res.status === 401 || res.status === 403) {
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('token');
+      localStorage.removeItem('email');
+      localStorage.removeItem('rol');
+      window.location.href = '/admin/login';
+    }
+    throw new Error('Sesión expirada');
+  }
+
+  if (!res.ok && res.status !== 204) {
+    const error = await res.json().catch(() => ({}));
+    throw new Error(error.mensaje || `Error ${res.status}`);
+  }
 }
 
 export async function editarProductosMasivo(data: {

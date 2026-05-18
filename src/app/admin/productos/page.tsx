@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { editarProductosMasivo, eliminarProducto, getProductosAdmin, toggleDestacadoProducto } from '@/lib/api';
 import { Producto } from '@/types';
 import ImportarExcelModal from '@/components/admin/ImportarExcelModal';
@@ -9,7 +9,7 @@ import PaginacionControls from './components/PaginacionControls';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 
-export default function AdminProductosPage() {
+function AdminProductosContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [productos, setProductos] = useState<Producto[]>([]);
@@ -530,5 +530,19 @@ export default function AdminProductosPage() {
         )}
       </div>
     </main>
+  );
+}
+
+export default function AdminProductosPage() {
+  return (
+    <Suspense fallback={
+      <main style={{ minHeight: '100vh', padding: '96px 24px 32px', background: '#fafafa' }}>
+        <div style={{ padding: '48px 24px', textAlign: 'center', color: 'var(--gray)', fontSize: '15px' }}>
+          Cargando...
+        </div>
+      </main>
+    }>
+      <AdminProductosContent />
+    </Suspense>
   );
 }

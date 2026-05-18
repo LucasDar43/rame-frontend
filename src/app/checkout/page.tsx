@@ -84,9 +84,9 @@ export default function CheckoutPage() {
     ? Math.round(subtotal * cuponInfo.porcentaje / 100)
     : 0;
   const subtotalConDescuento = subtotal - descuento;
-  const costoEnvio = envioInfo?.costo ?? (subtotalConDescuento < 80000 ? 3500 : 0);
+  const costoEnvio = envioInfo?.costo ?? 0;
   const totalFinal = subtotalConDescuento + costoEnvio;
-  const envioEsGratis = costoEnvio === 0;
+  const envioEsGratis = envioInfo !== null && costoEnvio === 0;
 
   const handleChange = (field: keyof FormState, value: string) => {
     setForm((current) => ({ ...current, [field]: value }));
