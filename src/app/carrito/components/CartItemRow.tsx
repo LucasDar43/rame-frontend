@@ -2,7 +2,7 @@
 
 /* eslint-disable @next/next/no-img-element */
 
-import type { CSSProperties, MouseEvent } from 'react';
+import type { CSSProperties } from 'react';
 
 import type { CartItem } from '@/context/CartContext';
 
@@ -33,12 +33,12 @@ function formatPrice(value: number) {
   return `$${value.toLocaleString('es-AR')}`;
 }
 
-function handleTrashHover(event: MouseEvent<HTMLButtonElement>) {
+function handleTrashHover(event: React.SyntheticEvent<HTMLButtonElement>) {
   event.currentTarget.style.color = '#cc3333';
   event.currentTarget.style.borderColor = '#cc3333';
 }
 
-function handleTrashLeave(event: MouseEvent<HTMLButtonElement>) {
+function handleTrashLeave(event: React.SyntheticEvent<HTMLButtonElement>) {
   event.currentTarget.style.color = 'var(--gray)';
   event.currentTarget.style.borderColor = 'var(--border)';
 }
