@@ -1,5 +1,7 @@
 import type { MetadataRoute } from "next";
 
+export const dynamic = 'force-dynamic';
+
 const FRONTEND_URL = process.env.NEXT_PUBLIC_FRONTEND_URL || "https://rameindumentaria.com";
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api";
 
@@ -11,7 +13,7 @@ interface SitemapProducto {
 async function getProductos() {
   try {
     const res = await fetch(`${API_URL}/productos?size=1000`, {
-      cache: "no-store",
+      next: { revalidate: 3600 },
     });
 
     if (!res.ok) {
