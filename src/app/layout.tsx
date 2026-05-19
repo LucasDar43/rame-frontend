@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { Playfair_Display, DM_Sans } from 'next/font/google';
 import './globals.css';
-import Navbar from '@/components/Navbar';
+import Navbar from '@/components/NavBar';
 import Footer from '@/components/Footer';
 import { CartProvider } from '@/context/CartContext';
 
