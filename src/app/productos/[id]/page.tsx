@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { getProducto, getVariantes } from '@/lib/api';
 import ProductoDetalle from '@/components/producto/ProductoDetalle';
 import { notFound } from 'next/navigation';
